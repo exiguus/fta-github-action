@@ -64,4 +64,4 @@ jobs:
 
       - name: Print Output Details
         id: output-details
-        run: echo -e "\nDetails\n${{ steps.test-action.outputs.details }}"
+        run: echo -e "\nDetails:\n${{ steps.test-action.outputs.details }}"

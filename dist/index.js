@@ -24715,9 +24715,9 @@ async function run(file_path) {
     // }
     // See: https://ftaproject.dev/docs/configuration#configuration-options
     // const output = await runFta(file_path, { json: true })
-    const detail = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --json'`).toString();
+    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --json'`).toString();
     const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)}'`).toString();
-    return { detail, summary };
+    return { details, summary };
 }
 exports.run = run;
 
@@ -24770,8 +24770,8 @@ async function run() {
         const output = await fta.run(file_path);
         core.debug(new Date().toTimeString());
         // Set outputs for other workflow steps to use
+        core.setOutput('details', output.details);
         core.setOutput('summary', output.summary);
-        core.setOutput('detail', output.detail);
     }
     catch (error) {
         // Fail the workflow run if an error occurs
