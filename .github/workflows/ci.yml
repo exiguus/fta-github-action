@@ -58,6 +58,10 @@ jobs:
         with:
           file_path: ../src/
 
-      - name: Print Output Values
-        id: output
-        run: echo "${{ steps.test-action.outputs.details }}" && echo "${{ steps.test-action.outputs.summary }}"
+      - name: Print Output Summary
+        id: output-summary
+        run: echo -e "\nSummary:\n${{ steps.test-action.outputs.summary }}"
+
+      - name: Print Output Details
+        id: output-details
+        run: echo -e "\nDetails\n${{ steps.test-action.outputs.details }}"
