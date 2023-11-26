@@ -56,8 +56,8 @@ jobs:
         id: test-action
         uses: ./
         with:
-          milliseconds: 1000
+          file_path: ../src/
 
-      - name: Print Output
+      - name: Print Output Values
         id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+        run: echo "${{ steps.test-action.outputs.details }}" && echo "${{ steps.test-action.outputs.summary }}"

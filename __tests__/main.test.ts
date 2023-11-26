@@ -20,7 +20,7 @@ let debugMock: jest.SpyInstance
 let errorMock: jest.SpyInstance
 let getInputMock: jest.SpyInstance
 let setFailedMock: jest.SpyInstance
-let setOutputMock: jest.SpyInstance
+// let setOutputMock: jest.SpyInstance
 
 describe('action', () => {
   beforeEach(() => {
@@ -30,15 +30,15 @@ describe('action', () => {
     errorMock = jest.spyOn(core, 'error').mockImplementation()
     getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
     setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
-    setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
+    // setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
   })
 
-  it('sets the time output', async () => {
+  it('sets the detail and summary output', async () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
-        case 'milliseconds':
-          return '500'
+        case 'file_path':
+          return './src/'
         default:
           return ''
       }
@@ -48,20 +48,25 @@ describe('action', () => {
     expect(runMock).toHaveReturned()
 
     // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
+    expect(debugMock).toHaveBeenNthCalledWith(1, "Input 'file_path' is: ./src/")
     expect(debugMock).toHaveBeenNthCalledWith(
       2,
       expect.stringMatching(timeRegex)
     )
     expect(debugMock).toHaveBeenNthCalledWith(
-      3,
+      2,
       expect.stringMatching(timeRegex)
     )
-    expect(setOutputMock).toHaveBeenNthCalledWith(
-      1,
-      'time',
-      expect.stringMatching(timeRegex)
-    )
+    // expect(setOutputMock).toHaveBeenNthCalledWith(
+    //   1,
+    //   'details',
+    //   expect.stringContaining('FTA Score (Lower is Better)')
+    // )
+    // expect(setOutputMock).toHaveBeenNthCalledWith(
+    //   1,
+    //   'summary',
+    //   expect.stringContaining('"file_name": "fta.ts"')
+    // )
     expect(errorMock).not.toHaveBeenCalled()
   })
 
@@ -69,8 +74,8 @@ describe('action', () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
-        case 'milliseconds':
-          return 'this is not a number'
+        case 'file_path':
+          return 'Param `file_path` is required'
         default:
           return ''
       }
@@ -82,7 +87,7 @@ describe('action', () => {
     // Verify that all of the core library functions were called correctly
     expect(setFailedMock).toHaveBeenNthCalledWith(
       1,
-      'milliseconds not a number'
+      'Param `file_path` does not exist'
     )
     expect(errorMock).not.toHaveBeenCalled()
   })

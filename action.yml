@@ -1,23 +1,25 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: "The name of your action here"
+description: "Provide a description here"
+author: "Your name or organization here"
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: 'heart'
-  color: 'red'
+  icon: "heart"
+  color: "red"
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  file_path:
+    description: "Your input description here"
     required: true
-    default: '1000'
+    default: "./src/"
 
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  summary:
+    description: "Your output description here"
+  details:
+    description: "Your output description here"
 
 runs:
   using: node20

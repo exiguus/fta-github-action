@@ -24663,6 +24663,67 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 9656:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.run = void 0;
+const fs_1 = __importDefault(__nccwpck_require__(7147));
+const path_1 = __importDefault(__nccwpck_require__(1017));
+const child_process_1 = __nccwpck_require__(2081);
+async function run(file_path) {
+    // throw if path is not a string
+    if (!file_path || typeof file_path !== 'string')
+        throw new Error('Param `file_path` is required');
+    // throw if path does not exist
+    if (!fs_1.default.existsSync(path_1.default.join(__dirname, file_path)))
+        throw new Error('Param `file_path` does not exist');
+    // fta
+    // Exec the cli fta command instead of the run function from the package
+    // because the run function does not support all the options
+    // See: https://github.com/sgb-io/fta/issues/50 and https://github.com/sgb-io/fta/issues/63
+    // Also the run function does not have a TS definition like:
+    // declare module 'fta-cli' {
+    //   export interface IConfig {
+    //     json?: boolean
+    //   }
+    //   export function runFta(path: string, config?: IConfig): string
+    // }
+    // Available options:
+    // --output-limit <number>        Default 5000  How many files to include in the output table format.
+    // --score-cap <number>           Default 1000  The maximum score to allow before throwing an error.
+    // --include-comments <boolean>   Default false Include comments in the analysis.
+    // --exclude-under <number>       Default 6     Exclude files with a line count under this number.
+    // --exclude-directories <string> Default ''    Exclude directories with this name.
+    // --exclude-filenames <string>   Default ''    Exclude files with this name.
+    // --exclude-extensions <string>  Default ''    Exclude files with this extension.
+    // --json <boolean>               Default false Output the results in JSON format.
+    // Config File Example:
+    // {
+    //   "output_limit": 250,
+    //   "score_cap": 90,
+    //   "exclude_directories": ["__fixtures__"],
+    //   "exclude_filenames": ["*.test.{ts,tsx}"],
+    //   "extensions": [".cjs"],
+    //   "include_comments": false,
+    //   "exclude_under": 10
+    // }
+    // See: https://ftaproject.dev/docs/configuration#configuration-options
+    // const output = await runFta(file_path, { json: true })
+    const detail = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --json'`).toString();
+    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)}'`).toString();
+    return { detail, summary };
+}
+exports.run = run;
+
+
+/***/ }),
+
 /***/ 399:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -24694,22 +24755,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const wait_1 = __nccwpck_require__(5259);
+const fta = __importStar(__nccwpck_require__(9656));
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
     try {
-        const ms = core.getInput('milliseconds');
+        const file_path = core.getInput('file_path') || '../src/';
         // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-        core.debug(`Waiting ${ms} milliseconds ...`);
+        core.debug(`Input 'file_path' is: ${file_path}`);
         // Log the current timestamp, wait, then log the new timestamp
         core.debug(new Date().toTimeString());
-        await (0, wait_1.wait)(parseInt(ms, 10));
+        const output = await fta.run(file_path);
         core.debug(new Date().toTimeString());
         // Set outputs for other workflow steps to use
-        core.setOutput('time', new Date().toTimeString());
+        core.setOutput('summary', output.summary);
+        core.setOutput('detail', output.detail);
     }
     catch (error) {
         // Fail the workflow run if an error occurs
@@ -24718,31 +24780,6 @@ async function run() {
     }
 }
 exports.run = run;
-
-
-/***/ }),
-
-/***/ 5259:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.wait = void 0;
-/**
- * Wait for a number of milliseconds.
- * @param milliseconds The number of milliseconds to wait.
- * @returns {Promise<string>} Resolves with 'done!' after the wait is over.
- */
-async function wait(milliseconds) {
-    return new Promise(resolve => {
-        if (isNaN(milliseconds)) {
-            throw new Error('milliseconds not a number');
-        }
-        setTimeout(() => resolve('done!'), milliseconds);
-    });
-}
-exports.wait = wait;
 
 
 /***/ }),
@@ -24768,6 +24805,14 @@ module.exports = require("async_hooks");
 
 "use strict";
 module.exports = require("buffer");
+
+/***/ }),
+
+/***/ 2081:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("child_process");
 
 /***/ }),
 
