@@ -24663,7 +24663,138 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ 9656:
+/***/ 3607:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__nccwpck_require__(8613), exports);
+
+
+/***/ }),
+
+/***/ 8172:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.mapActionOptions = exports.writeConfigFile = exports.generateConfigOptions = exports.defaultOptions = void 0;
+const fs_1 = __importDefault(__nccwpck_require__(7147));
+const types_1 = __nccwpck_require__(7809);
+// Use the defaults from FTA
+// See: https://github.com/sgb-io/fta-website/blob/main/pages/docs/configuration.mdx
+exports.defaultOptions = {
+    configPath: '',
+    format: types_1.Formats.table,
+    json: false,
+    outputLimit: 5000,
+    scoreCap: 1000,
+    includeComments: false,
+    excludeUnder: 6,
+    excludeDirectories: ['/dist', '/bin', '/build'],
+    excludeFilenames: ['.d.ts', '.min.js', '.bundle.js'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
+};
+const generateConfigOptions = (options) => ({
+    output_limit: options.outputLimit,
+    score_cap: options.scoreCap,
+    include_comments: options.includeComments,
+    exclude_under: options.excludeUnder,
+    exclude_directories: options.excludeDirectories,
+    exclude_filenames: options.excludeFilenames,
+    extensions: options.extensions
+});
+exports.generateConfigOptions = generateConfigOptions;
+const writeConfigFile = (options) => {
+    fs_1.default.writeFileSync('fta.config.json', JSON.stringify(options, null, 2));
+};
+exports.writeConfigFile = writeConfigFile;
+const mapActionOptions = (options) => ({
+    configPath: convertOptionToString('configPath', options.configPath),
+    format: convertOptionToFormat('format', options.format),
+    json: convertOptionToBoolean('json', options.json),
+    outputLimit: convertOptionToNumber('outputLimit', options.outputLimit),
+    scoreCap: convertOptionToNumber('scoreCap', options.scoreCap),
+    includeComments: convertOptionToBoolean('includeComments', options.includeComments),
+    excludeUnder: convertOptionToNumber('excludeUnder', options.excludeUnder),
+    excludeDirectories: convertOptionToArray('excludeDirectories', options.excludeDirectories),
+    excludeFilenames: convertOptionToArray('excludeFilenames', options.excludeFilenames),
+    extensions: convertOptionToArray('extensions', options.extensions)
+});
+exports.mapActionOptions = mapActionOptions;
+const isOptionString = (value) => typeof value === 'string';
+const isOptionFormat = (value) => typeof value === 'string' && Object.values(types_1.Formats).includes(value);
+const isOptionNumber = (value) => typeof value === 'string' && !isNaN(Number(value));
+const isOptionBoolean = (value) => typeof value === 'string' && (value === 'true' || value === 'false');
+const isOptionArray = (value) => typeof value === 'string' && Array.isArray(value.split(','));
+const convertOptionToString = (key, value) => {
+    if (!value || !isOptionString(value)) {
+        convertFailLog(key, 'string', value);
+        return exports.defaultOptions[key];
+    }
+    return value;
+};
+const convertOptionToFormat = (key, value) => {
+    if (!value || !isOptionFormat(value)) {
+        convertFailLog(key, 'format', value);
+        return exports.defaultOptions[key];
+    }
+    return value;
+};
+const convertOptionToArray = (key, value) => {
+    if (!value || !isOptionArray(value)) {
+        convertFailLog(key, 'array', value);
+        return exports.defaultOptions[key];
+    }
+    return value.split(',');
+};
+const convertOptionToBoolean = (key, value) => {
+    if (!value || !isOptionBoolean(value)) {
+        convertFailLog(key, 'boolean', value);
+        return exports.defaultOptions[key];
+    }
+    return value === 'true';
+};
+const convertOptionToNumber = (key, value) => {
+    if (!value || !isOptionNumber(value)) {
+        convertFailLog(key, 'number', value);
+        return exports.defaultOptions[key];
+    }
+    convertSuccessLog(key, value);
+    return Number(value);
+};
+const convertFailLog = (key, expect, value) => {
+    if (value)
+        console.warn(`Option: '${key}' - Expected a ${expect} but received '${value}'`);
+    console.info(`Option: '${key}' - Using default value '${JSON.stringify(exports.defaultOptions[key])}'`);
+};
+const convertSuccessLog = (key, value) => {
+    console.info(`Option: '${key}' - Using configured value '${JSON.stringify(value)}'`);
+};
+
+
+/***/ }),
+
+/***/ 8613:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -24676,13 +24807,33 @@ exports.run = void 0;
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const child_process_1 = __nccwpck_require__(2081);
-async function run(file_path) {
+const options_1 = __nccwpck_require__(8172);
+/**
+ * Run Fast TypeScript Analysis (FTA) on a file
+ * @description wrap the fta-cli package to run the fta command
+ * @param file_path - path to the file to analyze
+ * @returns {Output} - the output of the fta command
+ * @example
+ * import { run } from 'fta'
+ * const { details, summary } = await run('path/to/file.ts')
+ * console.log(details)
+ * console.log(summary)
+ **/
+async function run(file_path, options) {
     // throw if path is not a string
     if (!file_path || typeof file_path !== 'string')
         throw new Error('Param `file_path` is required');
     // throw if path does not exist
     if (!fs_1.default.existsSync(path_1.default.join(__dirname, file_path)))
         throw new Error('Param `file_path` does not exist');
+    options = options || {
+        scoreCap: '90'
+    };
+    const mappedOptions = (0, options_1.mapActionOptions)(options);
+    console.log('mappedOptions', mappedOptions);
+    const configFileOptions = (0, options_1.generateConfigOptions)(mappedOptions);
+    console.log('configFileOptions', configFileOptions);
+    (0, options_1.writeConfigFile)(configFileOptions);
     // fta
     // Exec the cli fta command instead of the run function from the package
     // because the run function does not support all the options
@@ -24695,14 +24846,31 @@ async function run(file_path) {
     //   export function runFta(path: string, config?: IConfig): string
     // }
     // Available options:
-    // --output-limit <number>        Default 5000  How many files to include in the output table format.
-    // --score-cap <number>           Default 1000  The maximum score to allow before throwing an error.
-    // --include-comments <boolean>   Default false Include comments in the analysis.
-    // --exclude-under <number>       Default 6     Exclude files with a line count under this number.
-    // --exclude-directories <string> Default ''    Exclude directories with this name.
-    // --exclude-filenames <string>   Default ''    Exclude files with this name.
-    // --exclude-extensions <string>  Default ''    Exclude files with this extension.
-    // --json <boolean>               Default false Output the results in JSON format.
+    // Fast TypeScript Analysis (FTA) fta-cli@1.0.0
+    // $ fta --help
+    // Fast TypeScript Analyzer
+    // Usage: fta [OPTIONS] <PROJECT>
+    // Arguments:
+    //   <PROJECT>  Path to the project to analyze
+    // Options:
+    //   -c, --config-path <CONFIG_PATH>
+    //           Path to config file
+    //   -f, --format <FORMAT>
+    //           Output format (default: table) [default: table] [possible values: table, csv, json]
+    //       --json
+    //           Output as JSON.
+    //   -o, --output-limit <OUTPUT_LIMIT>
+    //           Maximum number of files to include in the table output (only applies when using table output) (default: 5000)
+    //   -s, --score-cap <SCORE_CAP>
+    //           Maximum FTA score which will cause FTA to throw (default: 1000)
+    //   -i, --include-comments <INCLUDE_COMMENTS>
+    //           Whether to include code comments when analysing (default: false) [possible values: true, false]
+    //   -e, --exclude-under <EXCLUDE_UNDER>
+    //           Minimum number of lines of code for files to be included in output (default: 6)
+    //   -h, --help
+    //           Print help
+    //   -V, --version
+    //           Print version
     // Config File Example:
     // {
     //   "output_limit": 250,
@@ -24715,11 +24883,63 @@ async function run(file_path) {
     // }
     // See: https://ftaproject.dev/docs/configuration#configuration-options
     // const output = await runFta(file_path, { json: true })
-    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --json'`).toString();
-    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)}'`).toString();
+    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --json --config-path fta.config.json'`).toString();
+    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --config-path fta.config.json'`).toString();
     return { details, summary };
 }
 exports.run = run;
+
+
+/***/ }),
+
+/***/ 7809:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Formats = void 0;
+/**
+ * CLI Options
+ * Configuration Options, set via `fta.json`
+ * See: v1.0.0 https://github.com/sgb-io/fta-website/commit/01e8e0bcef53db1629c62e45159b0ae918093bfe
+ * See: general https://ftaproject.dev/docs/configuration#configuration-options
+ * | Option                | Equivalent CLI argument |
+ * | --------------------- | ----------------------- |
+ * | `output_limit`        | `--output-limit`        |
+ * | `score_cap`           | `--score-cap`           |
+ * | `include_comments`    | `--include-comments`    |
+ * | `exclude_under`       | `--exclude-under`       |
+ * | `extensions`          | N/A                     |
+ * | `exclude_filenames`   | N/A                     |
+ * | `exclude_directories` | N/A                     |
+ **/
+var FTA_CLIOptions;
+(function (FTA_CLIOptions) {
+    FTA_CLIOptions["configPath"] = "config-path";
+    FTA_CLIOptions["format"] = "format";
+    FTA_CLIOptions["json"] = "json";
+    FTA_CLIOptions["outputLimit"] = "output-limit";
+    FTA_CLIOptions["scoreCap"] = "score-cap";
+    FTA_CLIOptions["includeComments"] = "include-comments";
+    FTA_CLIOptions["excludeUnder"] = "exclude-under";
+})(FTA_CLIOptions || (FTA_CLIOptions = {}));
+var FTA_ConfigFileOptions;
+(function (FTA_ConfigFileOptions) {
+    FTA_ConfigFileOptions["outputLimit"] = "output_limit";
+    FTA_ConfigFileOptions["scoreCap"] = "score_cap";
+    FTA_ConfigFileOptions["includeComments"] = "include_comments";
+    FTA_ConfigFileOptions["excludeUnder"] = "exclude_under";
+    FTA_ConfigFileOptions["excludeDirectories"] = "exclude_directories";
+    FTA_ConfigFileOptions["excludeFilenames"] = "exclude_filenames";
+    FTA_ConfigFileOptions["extensions"] = "extensions";
+})(FTA_ConfigFileOptions || (FTA_ConfigFileOptions = {}));
+var Formats;
+(function (Formats) {
+    Formats["table"] = "table";
+    Formats["csv"] = "csv";
+    Formats["json"] = "json";
+})(Formats || (exports.Formats = Formats = {}));
 
 
 /***/ }),
@@ -24755,7 +24975,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const fta = __importStar(__nccwpck_require__(9656));
+const fta = __importStar(__nccwpck_require__(3607));
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.

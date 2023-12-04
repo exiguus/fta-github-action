@@ -1,0 +1,22 @@
+{
+  "output_limit": 5000,
+  "score_cap": 90,
+  "include_comments": false,
+  "exclude_under": 6,
+  "exclude_directories": [
+    "/dist",
+    "/bin",
+    "/build"
+  ],
+  "exclude_filenames": [
+    ".d.ts",
+    ".min.js",
+    ".bundle.js"
+  ],
+  "extensions": [
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx"
+  ]
+}
