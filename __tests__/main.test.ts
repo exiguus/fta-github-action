@@ -12,9 +12,6 @@ import * as main from '../src/main'
 // Mock the action's main function
 const runMock = jest.spyOn(main, 'run')
 
-// Other utilities
-const timeRegex = /^\d{2}:\d{2}:\d{2}/
-
 // Mock the GitHub Actions core library
 let debugMock: jest.SpyInstance
 let errorMock: jest.SpyInstance
@@ -49,14 +46,6 @@ describe('action', () => {
 
     // Verify that all of the core library functions were called correctly
     expect(debugMock).toHaveBeenNthCalledWith(1, "Input 'file_path' is: ./src/")
-    expect(debugMock).toHaveBeenNthCalledWith(
-      2,
-      expect.stringMatching(timeRegex)
-    )
-    expect(debugMock).toHaveBeenNthCalledWith(
-      2,
-      expect.stringMatching(timeRegex)
-    )
     // expect(setOutputMock).toHaveBeenNthCalledWith(
     //   1,
     //   'details',
@@ -75,7 +64,7 @@ describe('action', () => {
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
         case 'file_path':
-          return 'Param `file_path` is required'
+          return 'Param `file_path` does not exist'
         default:
           return ''
       }

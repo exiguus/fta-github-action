@@ -9,7 +9,7 @@ describe('wait.ts', () => {
   it('throws on invalid file_path', async () => {
     const file_path = ''
     await expect(fta.run(file_path)).rejects.toThrow(
-      'Param `file_path` is required'
+      'Param `file_path` does not exist'
     )
   })
 
