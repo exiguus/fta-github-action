@@ -65,3 +65,10 @@ jobs:
       - name: Print Output Details
         id: output-details
         run: echo -e "\nDetails:\n${{ steps.test-action.outputs.details }}"
+
+      - name: Upload Output Summary
+        id: upload-output
+        uses: actions/upload-artifact@v3
+        with:
+          name: output
+          path: output.json
