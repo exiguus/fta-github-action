@@ -104,3 +104,4 @@ __tests__/runner/*
 
 # fta
 fta.config.json
+output.json
