@@ -24902,7 +24902,8 @@ const fs_1 = __importDefault(__nccwpck_require__(7147));
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const writeOutput = (output_path, data) => {
     try {
-        fs_1.default.writeFileSync(path_1.default.join(__dirname, output_path), data, {
+        // write output file into ../dist
+        fs_1.default.writeFileSync(path_1.default.join(__dirname, '..', output_path), data, {
             encoding: 'utf8'
         });
     }
