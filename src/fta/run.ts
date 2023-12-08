@@ -131,19 +131,15 @@ export async function run(
   // output
   // details is the output of the fta command with the format option
   //  details are also saved to a file in the github action
+  const configFile = path.join(__dirname, TMP_CONFIG_FILE)
+  const filePath = path.join(__dirname, file_path)
   const details = execSync(
-    `npm exec --package=fta-cli -c 'fta ${path.join(
-      __dirname,
-      file_path
-    )} --config-path ${TMP_CONFIG_FILE} --format ${mappedOptions.format}'`
+    `npm exec --package=fta-cli -c 'fta ${filePath} --config-path ${configFile} --format ${mappedOptions.format}'`
   ).toString()
   // summary is the output of the fta command with the table format option
   //  to have a quick look at the results
   const summary = execSync(
-    `npm exec --package=fta-cli -c 'fta ${path.join(
-      __dirname,
-      file_path
-    )} --config-path ${TMP_CONFIG_FILE}--format table'`
+    `npm exec --package=fta-cli -c 'fta ${filePath} --config-path ${configFile} --format table'`
   ).toString()
 
   if (output_path) {

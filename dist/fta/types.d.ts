@@ -38,6 +38,7 @@ export type ActionOptions = Record<keyof typeof FTA_CLIOptions | keyof typeof FT
 export type ActionInput = {
     filePath: string;
     configPath: string;
+    outputPath: string;
 } & Record<keyof typeof FTA_CLIOptions | keyof typeof FTA_ConfigFileOptions, string>;
 export type ActionOutput = {
     details: string;

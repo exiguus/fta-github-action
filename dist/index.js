@@ -24711,22 +24711,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.generateConfigFile = exports.isActionOptions = exports.writeConfig = exports.getConfig = void 0;
+exports.generateConfigFile = exports.isActionOptions = exports.writeConfig = exports.getConfig = exports.TMP_CONFIG_FILE = void 0;
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const types_1 = __nccwpck_require__(7809);
+exports.TMP_CONFIG_FILE = 'tmp-config-file.json';
+/**
+ * getConfig from a json file and validate it
+ * @param {string} config_path
+ * @returns {Partial<ActionOptions> | null}
+ */
 const getConfig = (config_path) => {
     try {
         const config = JSON.parse(fs_1.default.readFileSync(path_1.default.join(__dirname, config_path), 'utf8'));
-        return ((0, exports.isActionOptions)(config)) ? config : null;
+        return (0, exports.isActionOptions)(config) ? config : null;
     }
     catch (error) {
         throw new Error('Param `config_path` is not a valid json file');
     }
 };
 exports.getConfig = getConfig;
-const writeConfig = (options) => {
-    fs_1.default.writeFileSync('fta.config.json', JSON.stringify(options, null, 2));
+/**
+ * writeConfig to a json file
+ * @param {string} config_path
+ * @param {ConfigFileOptions} options
+ * @returns {void}
+ */
+const writeConfig = (config_path, options) => {
+    try {
+        fs_1.default.writeFileSync(path_1.default.join(__dirname, config_path), JSON.stringify(options, null, 2), { encoding: 'utf8' });
+    }
+    catch (error) {
+        throw new Error('Error writing config file');
+    }
 };
 exports.writeConfig = writeConfig;
 // ConfigFileOptions is a subset of ActionOptions
@@ -24734,7 +24751,7 @@ const isActionOptions = (options) => {
     if (typeof options !== 'object' || options === null)
         return false;
     const actionOptions = Object.values(types_1.FTA_ConfigFileOptions);
-    return actionOptions.every((option) => option in options);
+    return actionOptions.every(option => option in options);
 };
 exports.isActionOptions = isActionOptions;
 const generateConfigFile = (options) => ({
@@ -24787,6 +24804,7 @@ const types_1 = __nccwpck_require__(7809);
 exports.defaultInput = {
     filePath: '../src/',
     configPath: '',
+    outputPath: 'output.json',
     format: 'json',
     json: 'false',
     outputLimit: '5000',
@@ -24870,6 +24888,33 @@ const convertSuccessLog = (key, value) => {
 
 /***/ }),
 
+/***/ 9599:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.writeOutput = void 0;
+const fs_1 = __importDefault(__nccwpck_require__(7147));
+const path_1 = __importDefault(__nccwpck_require__(1017));
+const writeOutput = (output_path, data) => {
+    try {
+        fs_1.default.writeFileSync(path_1.default.join(__dirname, output_path), data, {
+            encoding: 'utf8'
+        });
+    }
+    catch (error) {
+        throw new Error('Error writing output file');
+    }
+};
+exports.writeOutput = writeOutput;
+
+
+/***/ }),
+
 /***/ 8613:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -24885,38 +24930,52 @@ const path_1 = __importDefault(__nccwpck_require__(1017));
 const child_process_1 = __nccwpck_require__(2081);
 const options_1 = __nccwpck_require__(8172);
 const config_1 = __nccwpck_require__(47);
+const output_1 = __nccwpck_require__(9599);
 /**
  * Run Fast TypeScript Analysis (FTA) on a file
  * @description wrap the fta-cli package to run the fta command
- * @param file_path - path to the file to analyze
- * @returns {Output} - the output of the fta command
- * @example
- * import { run } from 'fta'
- * const { details, summary } = await run('path/to/file.ts')
- * console.log(details)
- * console.log(summary)
+ * @param {string} file_path - path to the file to analyze
+ * @param {string} config_path - path to the config file
+ * @param {string} output_path - path to the output file
+ * @param {Partial<ActionOptions>} options - options to override the config file
+ * @returns {Promise<ActionOutput>} - the output of the fta command
  **/
-async function run(file_path, config_path, options = null) {
+async function run(file_path, config_path, output_path, options = null) {
     if (!file_path) {
         file_path = options_1.defaultInput.filePath;
     }
     if (!config_path) {
         config_path = options_1.defaultInput.configPath;
     }
+    if (!output_path) {
+        output_path = options_1.defaultInput.outputPath;
+    }
     if (!fs_1.default.existsSync(path_1.default.join(__dirname, file_path)))
         throw new Error('Param `file_path` does not exist');
+    // use --format over --json shorthand fta cli cmd
+    if (options?.json && options?.format !== 'json') {
+        options.format = 'json';
+        options.json = 'false';
+    }
+    // map options from github action, config_path and defaults
+    // if config_path is provided, use it and override with options
+    //  if not, use options or defaultOptions
     let mappedOptions;
     if (config_path.length > 0) {
         // throw if config path does not exist
         if (!fs_1.default.existsSync(path_1.default.join(__dirname, config_path)))
             throw new Error('Param `config_path` does not exist');
         // throw if config path is not a json file
+        if (!fs_1.default.existsSync(path_1.default.join(__dirname, config_path)))
+            throw new Error('Param `config_path` does not exist');
+        if (!fs_1.default.lstatSync(path_1.default.join(__dirname, config_path)).isFile())
+            throw new Error('Param `config_path` is not a file');
         if (path_1.default.extname(config_path) !== '.json')
             throw new Error('Param `config_path` is not a json file');
         const config = (0, config_1.getConfig)(config_path);
         mappedOptions = (0, options_1.mapActionOptions)({
             // options have priority over config (like in the cli)
-            ...(config ?? {}),
+            ...config,
             ...options
         });
     }
@@ -24924,7 +24983,7 @@ async function run(file_path, config_path, options = null) {
         mappedOptions = options ? (0, options_1.mapActionOptions)(options) : options_1.defaultOptions;
     }
     const configFileOptions = (0, config_1.generateConfigFile)(mappedOptions);
-    (0, config_1.writeConfig)(configFileOptions);
+    (0, config_1.writeConfig)(config_1.TMP_CONFIG_FILE, configFileOptions);
     // fta
     // Exec the cli fta command instead of the run function from the package
     // because the run function does not support all the options
@@ -24973,9 +25032,18 @@ async function run(file_path, config_path, options = null) {
     //   "exclude_under": 10
     // }
     // See: https://ftaproject.dev/docs/configuration#configuration-options
-    // const output = await runFta(file_path, { json: true })
-    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --config-path fta.config.json --format ${mappedOptions.format}'`).toString();
-    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --config-path fta.config.json --format table'`).toString();
+    // output
+    // details is the output of the fta command with the format option
+    //  details are also saved to a file in the github action
+    const configFile = path_1.default.join(__dirname, config_1.TMP_CONFIG_FILE);
+    const filePath = path_1.default.join(__dirname, file_path);
+    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${filePath} --config-path ${configFile} --format ${mappedOptions.format}'`).toString();
+    // summary is the output of the fta command with the table format option
+    //  to have a quick look at the results
+    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${filePath} --config-path ${configFile} --format table'`).toString();
+    if (output_path) {
+        (0, output_1.writeOutput)(output_path, details);
+    }
     return { details, summary };
 }
 exports.run = run;
@@ -25075,6 +25143,8 @@ async function run() {
     try {
         const file_path = core.getInput('file_path');
         const config_path = core.getInput('config_path');
+        const output_path = core.getInput('output_path');
+        // fta options
         const format = core.getInput('format');
         const json = core.getInput('json');
         const output_limit = core.getInput('output_limit');
@@ -25087,6 +25157,8 @@ async function run() {
         // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
         core.debug(`Input 'file_path' is: ${file_path}`);
         core.debug(`Input 'config_path' is: ${config_path}`);
+        core.debug(`Input 'output_path' is: ${output_path}`);
+        // fta options
         core.debug(`Input 'format' is: ${format}`);
         core.debug(`Input 'json' is: ${json}`);
         core.debug(`Input 'output_limit' is: ${output_limit}`);
@@ -25098,7 +25170,7 @@ async function run() {
         core.debug(`Input 'extensions' is: ${extensions}`);
         // Log the current timestamp, wait, then log the new timestamp
         core.debug(new Date().toTimeString());
-        const output = await fta.run(file_path, config_path, {
+        const output = await fta.run(file_path, config_path, output_path, {
             format,
             json,
             outputLimit: output_limit,
