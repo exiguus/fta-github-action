@@ -24702,6 +24702,55 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 47:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.generateConfigFile = exports.isActionOptions = exports.writeConfig = exports.getConfig = void 0;
+const fs_1 = __importDefault(__nccwpck_require__(7147));
+const path_1 = __importDefault(__nccwpck_require__(1017));
+const types_1 = __nccwpck_require__(7809);
+const getConfig = (config_path) => {
+    try {
+        const config = JSON.parse(fs_1.default.readFileSync(path_1.default.join(__dirname, config_path), 'utf8'));
+        return ((0, exports.isActionOptions)(config)) ? config : null;
+    }
+    catch (error) {
+        throw new Error('Param `config_path` is not a valid json file');
+    }
+};
+exports.getConfig = getConfig;
+const writeConfig = (options) => {
+    fs_1.default.writeFileSync('fta.config.json', JSON.stringify(options, null, 2));
+};
+exports.writeConfig = writeConfig;
+// ConfigFileOptions is a subset of ActionOptions
+const isActionOptions = (options) => {
+    if (typeof options !== 'object' || options === null)
+        return false;
+    const actionOptions = Object.values(types_1.FTA_ConfigFileOptions);
+    return actionOptions.every((option) => option in options);
+};
+exports.isActionOptions = isActionOptions;
+const generateConfigFile = (options) => ({
+    output_limit: options.outputLimit,
+    score_cap: options.scoreCap,
+    include_comments: options.includeComments,
+    exclude_under: options.excludeUnder,
+    exclude_directories: options.excludeDirectories,
+    exclude_filenames: options.excludeFilenames,
+    extensions: options.extensions
+});
+exports.generateConfigFile = generateConfigFile;
+
+
+/***/ }),
+
 /***/ 3607:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -24728,22 +24777,30 @@ __exportStar(__nccwpck_require__(8613), exports);
 /***/ }),
 
 /***/ 8172:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.mapActionOptions = exports.writeConfigFile = exports.generateConfigOptions = exports.defaultOptions = void 0;
-const fs_1 = __importDefault(__nccwpck_require__(7147));
+exports.mapActionOptions = exports.defaultOptions = exports.defaultInput = void 0;
 const types_1 = __nccwpck_require__(7809);
+exports.defaultInput = {
+    filePath: '../src/',
+    configPath: '',
+    format: 'json',
+    json: 'false',
+    outputLimit: '5000',
+    scoreCap: '1000',
+    includeComments: 'false',
+    excludeUnder: '6',
+    excludeDirectories: '/dist, /bin, /build',
+    excludeFilenames: '.d.ts, .min.js, .bundle.js',
+    extensions: '.js, .jsx, .ts, .tsx'
+};
 // Use the defaults from FTA
 // See: https://github.com/sgb-io/fta-website/blob/main/pages/docs/configuration.mdx
 exports.defaultOptions = {
-    configPath: '',
-    format: types_1.Formats.table,
+    format: types_1.Formats.json,
     json: false,
     outputLimit: 5000,
     scoreCap: 1000,
@@ -24753,22 +24810,7 @@ exports.defaultOptions = {
     excludeFilenames: ['.d.ts', '.min.js', '.bundle.js'],
     extensions: ['.js', '.jsx', '.ts', '.tsx']
 };
-const generateConfigOptions = (options) => ({
-    output_limit: options.outputLimit,
-    score_cap: options.scoreCap,
-    include_comments: options.includeComments,
-    exclude_under: options.excludeUnder,
-    exclude_directories: options.excludeDirectories,
-    exclude_filenames: options.excludeFilenames,
-    extensions: options.extensions
-});
-exports.generateConfigOptions = generateConfigOptions;
-const writeConfigFile = (options) => {
-    fs_1.default.writeFileSync('fta.config.json', JSON.stringify(options, null, 2));
-};
-exports.writeConfigFile = writeConfigFile;
 const mapActionOptions = (options) => ({
-    configPath: convertOptionToString('configPath', options.configPath),
     format: convertOptionToFormat('format', options.format),
     json: convertOptionToBoolean('json', options.json),
     outputLimit: convertOptionToNumber('outputLimit', options.outputLimit),
@@ -24780,23 +24822,16 @@ const mapActionOptions = (options) => ({
     extensions: convertOptionToArray('extensions', options.extensions)
 });
 exports.mapActionOptions = mapActionOptions;
-const isOptionString = (value) => typeof value === 'string';
 const isOptionFormat = (value) => typeof value === 'string' && Object.values(types_1.Formats).includes(value);
 const isOptionNumber = (value) => typeof value === 'string' && !isNaN(Number(value));
 const isOptionBoolean = (value) => typeof value === 'string' && (value === 'true' || value === 'false');
 const isOptionArray = (value) => typeof value === 'string' && Array.isArray(value.split(','));
-const convertOptionToString = (key, value) => {
-    if (!value || !isOptionString(value)) {
-        convertFailLog(key, 'string', value);
-        return exports.defaultOptions[key];
-    }
-    return value;
-};
 const convertOptionToFormat = (key, value) => {
     if (!value || !isOptionFormat(value)) {
         convertFailLog(key, 'format', value);
         return exports.defaultOptions[key];
     }
+    convertSuccessLog(key, value);
     return value;
 };
 const convertOptionToArray = (key, value) => {
@@ -24804,6 +24839,7 @@ const convertOptionToArray = (key, value) => {
         convertFailLog(key, 'array', value);
         return exports.defaultOptions[key];
     }
+    convertSuccessLog(key, value);
     return value.split(',');
 };
 const convertOptionToBoolean = (key, value) => {
@@ -24811,6 +24847,7 @@ const convertOptionToBoolean = (key, value) => {
         convertFailLog(key, 'boolean', value);
         return exports.defaultOptions[key];
     }
+    convertSuccessLog(key, value);
     return value === 'true';
 };
 const convertOptionToNumber = (key, value) => {
@@ -24824,7 +24861,7 @@ const convertOptionToNumber = (key, value) => {
 const convertFailLog = (key, expect, value) => {
     if (value)
         console.warn(`Option: '${key}' - Expected a ${expect} but received '${value}'`);
-    console.info(`Option: '${key}' - Using default value '${JSON.stringify(exports.defaultOptions[key])}'`);
+    console.info(`Option: '${key}' - Using default value '${JSON.stringify(exports.defaultInput[key])}'`);
 };
 const convertSuccessLog = (key, value) => {
     console.info(`Option: '${key}' - Using configured value '${JSON.stringify(value)}'`);
@@ -24847,6 +24884,7 @@ const fs_1 = __importDefault(__nccwpck_require__(7147));
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const child_process_1 = __nccwpck_require__(2081);
 const options_1 = __nccwpck_require__(8172);
+const config_1 = __nccwpck_require__(47);
 /**
  * Run Fast TypeScript Analysis (FTA) on a file
  * @description wrap the fta-cli package to run the fta command
@@ -24858,21 +24896,35 @@ const options_1 = __nccwpck_require__(8172);
  * console.log(details)
  * console.log(summary)
  **/
-async function run(file_path, options) {
-    // throw if path is not a string
-    if (!file_path || typeof file_path !== 'string')
-        throw new Error('Param `file_path` is required');
-    // throw if path does not exist
+async function run(file_path, config_path, options = null) {
+    if (!file_path) {
+        file_path = options_1.defaultInput.filePath;
+    }
+    if (!config_path) {
+        config_path = options_1.defaultInput.configPath;
+    }
     if (!fs_1.default.existsSync(path_1.default.join(__dirname, file_path)))
         throw new Error('Param `file_path` does not exist');
-    options = options || {
-        scoreCap: '90'
-    };
-    const mappedOptions = (0, options_1.mapActionOptions)(options);
-    console.log('mappedOptions', mappedOptions);
-    const configFileOptions = (0, options_1.generateConfigOptions)(mappedOptions);
-    console.log('configFileOptions', configFileOptions);
-    (0, options_1.writeConfigFile)(configFileOptions);
+    let mappedOptions;
+    if (config_path.length > 0) {
+        // throw if config path does not exist
+        if (!fs_1.default.existsSync(path_1.default.join(__dirname, config_path)))
+            throw new Error('Param `config_path` does not exist');
+        // throw if config path is not a json file
+        if (path_1.default.extname(config_path) !== '.json')
+            throw new Error('Param `config_path` is not a json file');
+        const config = (0, config_1.getConfig)(config_path);
+        mappedOptions = (0, options_1.mapActionOptions)({
+            // options have priority over config (like in the cli)
+            ...(config ?? {}),
+            ...options
+        });
+    }
+    else {
+        mappedOptions = options ? (0, options_1.mapActionOptions)(options) : options_1.defaultOptions;
+    }
+    const configFileOptions = (0, config_1.generateConfigFile)(mappedOptions);
+    (0, config_1.writeConfig)(configFileOptions);
     // fta
     // Exec the cli fta command instead of the run function from the package
     // because the run function does not support all the options
@@ -24922,8 +24974,8 @@ async function run(file_path, options) {
     // }
     // See: https://ftaproject.dev/docs/configuration#configuration-options
     // const output = await runFta(file_path, { json: true })
-    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --json --config-path fta.config.json'`).toString();
-    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --config-path fta.config.json'`).toString();
+    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --config-path fta.config.json --format ${mappedOptions.format}'`).toString();
+    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${path_1.default.join(__dirname, file_path)} --config-path fta.config.json --format table'`).toString();
     return { details, summary };
 }
 exports.run = run;
@@ -24937,7 +24989,7 @@ exports.run = run;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Formats = void 0;
+exports.Formats = exports.FTA_ConfigFileOptions = void 0;
 /**
  * CLI Options
  * Configuration Options, set via `fta.json`
@@ -24972,7 +25024,7 @@ var FTA_ConfigFileOptions;
     FTA_ConfigFileOptions["excludeDirectories"] = "exclude_directories";
     FTA_ConfigFileOptions["excludeFilenames"] = "exclude_filenames";
     FTA_ConfigFileOptions["extensions"] = "extensions";
-})(FTA_ConfigFileOptions || (FTA_ConfigFileOptions = {}));
+})(FTA_ConfigFileOptions || (exports.FTA_ConfigFileOptions = FTA_ConfigFileOptions = {}));
 var Formats;
 (function (Formats) {
     Formats["table"] = "table";
@@ -25021,12 +25073,42 @@ const fta = __importStar(__nccwpck_require__(3607));
  */
 async function run() {
     try {
-        const file_path = core.getInput('file_path') || '../src/';
+        const file_path = core.getInput('file_path');
+        const config_path = core.getInput('config_path');
+        const format = core.getInput('format');
+        const json = core.getInput('json');
+        const output_limit = core.getInput('output_limit');
+        const score_cap = core.getInput('score_cap');
+        const include_comments = core.getInput('include_comments');
+        const exclude_under = core.getInput('exclude_under');
+        const exclude_directories = core.getInput('exclude_directories');
+        const exclude_filenames = core.getInput('exclude_filenames');
+        const extensions = core.getInput('extensions');
         // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
         core.debug(`Input 'file_path' is: ${file_path}`);
+        core.debug(`Input 'config_path' is: ${config_path}`);
+        core.debug(`Input 'format' is: ${format}`);
+        core.debug(`Input 'json' is: ${json}`);
+        core.debug(`Input 'output_limit' is: ${output_limit}`);
+        core.debug(`Input 'score_cap' is: ${score_cap}`);
+        core.debug(`Input 'include_comments' is: ${include_comments}`);
+        core.debug(`Input 'exclude_under' is: ${exclude_under}`);
+        core.debug(`Input 'exclude_directories' is: ${exclude_directories}`);
+        core.debug(`Input 'exclude_filenames' is: ${exclude_filenames}`);
+        core.debug(`Input 'extensions' is: ${extensions}`);
         // Log the current timestamp, wait, then log the new timestamp
         core.debug(new Date().toTimeString());
-        const output = await fta.run(file_path);
+        const output = await fta.run(file_path, config_path, {
+            format,
+            json,
+            outputLimit: output_limit,
+            scoreCap: score_cap,
+            includeComments: include_comments,
+            excludeUnder: exclude_under,
+            excludeDirectories: exclude_directories,
+            excludeFilenames: exclude_filenames,
+            extensions
+        });
         core.debug(new Date().toTimeString());
         // Set outputs for other workflow steps to use
         core.setOutput('details', output.details);

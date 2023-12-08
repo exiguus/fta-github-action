@@ -13,6 +13,49 @@ inputs:
     description: "Your input description here"
     required: true
     default: "./src/"
+  config_path:
+    description: "Your input description here"
+    required: false
+  output_path:
+    description: "Your input description here"
+    required: false
+    default: "output.json"
+  format:
+    description: "Your input description here"
+    required: false
+    default: "table"
+  json:
+    description: "Your input description here"
+    required: false
+    default: "false"
+  output_limit:
+    description: "Your input description here"
+    required: false
+    default: "5000"
+  score_cap:
+    description: "Your input description here"
+    required: false
+    default: "1000"
+  include_comments:
+    description: "Your input description here"
+    required: false
+    default: "false"
+  exclude_under:
+    description: "Your input description here"
+    required: false
+    default: "6"
+  exclude_directories:
+    description: "Your input description here"
+    required: false
+    default: "/dist, /bin, /build"
+  exclude_filenames:
+    description: "Your input description here"
+    required: false
+    default: ".d.ts, .min.js, .bundle.js"
+  extensions:
+    description: "Your input description here"
+    required: false
+    default: ".js, .jsx, .ts, .tsx"
 
 # Define your outputs here.
 outputs:

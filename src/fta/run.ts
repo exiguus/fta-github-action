@@ -2,42 +2,77 @@ import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
 import { ActionOptions, ActionOutput } from './types'
+import { defaultInput, defaultOptions, mapActionOptions } from './options'
 import {
-  generateConfigOptions,
-  mapActionOptions,
-  writeConfigFile
-} from './options'
+  TMP_CONFIG_FILE,
+  generateConfigFile,
+  getConfig,
+  writeConfig
+} from './config'
+import { writeOutput } from './output'
 
 /**
  * Run Fast TypeScript Analysis (FTA) on a file
  * @description wrap the fta-cli package to run the fta command
- * @param file_path - path to the file to analyze
- * @returns {Output} - the output of the fta command
- * @example
- * import { run } from 'fta'
- * const { details, summary } = await run('path/to/file.ts')
- * console.log(details)
- * console.log(summary)
+ * @param {string} file_path - path to the file to analyze
+ * @param {string} config_path - path to the config file
+ * @param {string} output_path - path to the output file
+ * @param {Partial<ActionOptions>} options - options to override the config file
+ * @returns {Promise<ActionOutput>} - the output of the fta command
  **/
 export async function run(
-  file_path: string,
-  options?: Partial<ActionOptions>
+  file_path?: string,
+  config_path?: string,
+  output_path?: string,
+  options: Partial<ActionOptions> | null = null
 ): Promise<ActionOutput> {
-  // throw if path is not a string
-  if (!file_path || typeof file_path !== 'string')
-    throw new Error('Param `file_path` is required')
-  // throw if path does not exist
+  if (!file_path) {
+    file_path = defaultInput.filePath
+  }
+  if (!config_path) {
+    config_path = defaultInput.configPath
+  }
+  if (!output_path) {
+    output_path = defaultInput.outputPath
+  }
+
   if (!fs.existsSync(path.join(__dirname, file_path)))
     throw new Error('Param `file_path` does not exist')
 
-  options = options || {
-    scoreCap: '90'
+  // use --format over --json shorthand fta cli cmd
+  if (options?.json && options?.format !== 'json') {
+    options.format = 'json'
+    options.json = 'false'
   }
-  const mappedOptions = mapActionOptions(options)
-  console.log('mappedOptions', mappedOptions)
-  const configFileOptions = generateConfigOptions(mappedOptions)
-  console.log('configFileOptions', configFileOptions)
-  writeConfigFile(configFileOptions)
+
+  // map options from github action, config_path and defaults
+  // if config_path is provided, use it and override with options
+  //  if not, use options or defaultOptions
+  let mappedOptions
+  if (config_path.length > 0) {
+    // throw if config path does not exist
+    if (!fs.existsSync(path.join(__dirname, config_path)))
+      throw new Error('Param `config_path` does not exist')
+    // throw if config path is not a json file
+    if (!fs.existsSync(path.join(__dirname, config_path)))
+      throw new Error('Param `config_path` does not exist')
+    if (!fs.lstatSync(path.join(__dirname, config_path)).isFile())
+      throw new Error('Param `config_path` is not a file')
+    if (path.extname(config_path) !== '.json')
+      throw new Error('Param `config_path` is not a json file')
+
+    const config = getConfig(config_path)
+    mappedOptions = mapActionOptions({
+      // options have priority over config (like in the cli)
+      ...config,
+      ...options
+    })
+  } else {
+    mappedOptions = options ? mapActionOptions(options) : defaultOptions
+  }
+
+  const configFileOptions = generateConfigFile(mappedOptions)
+  writeConfig(TMP_CONFIG_FILE, configFileOptions)
   // fta
   // Exec the cli fta command instead of the run function from the package
   // because the run function does not support all the options
@@ -93,18 +128,27 @@ export async function run(
   // }
   // See: https://ftaproject.dev/docs/configuration#configuration-options
 
-  // const output = await runFta(file_path, { json: true })
+  // output
+  // details is the output of the fta command with the format option
+  //  details are also saved to a file in the github action
   const details = execSync(
     `npm exec --package=fta-cli -c 'fta ${path.join(
       __dirname,
       file_path
-    )} --json --config-path fta.config.json'`
+    )} --config-path ${TMP_CONFIG_FILE} --format ${mappedOptions.format}'`
   ).toString()
+  // summary is the output of the fta command with the table format option
+  //  to have a quick look at the results
   const summary = execSync(
     `npm exec --package=fta-cli -c 'fta ${path.join(
       __dirname,
       file_path
-    )} --config-path fta.config.json'`
+    )} --config-path ${TMP_CONFIG_FILE}--format table'`
   ).toString()
+
+  if (output_path) {
+    writeOutput(output_path, details)
+  }
+
   return { details, summary }
 }

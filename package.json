@@ -10,7 +10,7 @@
     "url": "git+https://github.com/exiguus/fta-github-action/.git"
   },
   "bugs": {
-    "url": "https://github.com/exiguus/fta-github-action//issues"
+    "url": "https://github.com/exiguus/fta-github-action/issues"
   },
   "keywords": [
     "actions",

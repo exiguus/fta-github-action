@@ -10,4 +10,4 @@ import { ActionOptions, ActionOutput } from './types';
  * console.log(details)
  * console.log(summary)
  **/
-export declare function run(file_path: string, options?: Partial<ActionOptions>): Promise<ActionOutput>;
+export declare function run(file_path?: string, config_path?: string, options?: Partial<ActionOptions> | null): Promise<ActionOutput>;

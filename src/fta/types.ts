@@ -23,7 +23,7 @@ enum FTA_CLIOptions {
   excludeUnder = 'exclude-under'
 }
 
-enum FTA_ConfigFileOptions {
+export enum FTA_ConfigFileOptions {
   outputLimit = 'output_limit',
   scoreCap = 'score_cap',
   includeComments = 'include_comments',
@@ -43,6 +43,15 @@ export type ActionOptions = Record<
   string | undefined
 >
 
+export type ActionInput = {
+  filePath: string
+  configPath: string
+  outputPath: string
+} & Record<
+  keyof typeof FTA_CLIOptions | keyof typeof FTA_ConfigFileOptions,
+  string
+>
+
 export type ActionOutput = {
   details: string
   summary: string
@@ -55,7 +64,6 @@ export enum Formats {
 }
 
 export type OptionsMap = {
-  configPath: string
   format: Formats
   json: boolean
   outputLimit: number

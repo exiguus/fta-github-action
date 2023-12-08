@@ -1,11 +1,23 @@
-import fs from 'fs'
-import { ActionOptions, ConfigFileOptions, Formats, OptionsMap } from './types'
+import { ActionInput, ActionOptions, Formats, OptionsMap } from './types'
 
+export const defaultInput: ActionInput = {
+  filePath: '../src/',
+  configPath: '',
+  outputPath: 'output.json',
+  format: 'json',
+  json: 'false',
+  outputLimit: '5000',
+  scoreCap: '1000',
+  includeComments: 'false',
+  excludeUnder: '6',
+  excludeDirectories: '/dist, /bin, /build',
+  excludeFilenames: '.d.ts, .min.js, .bundle.js',
+  extensions: '.js, .jsx, .ts, .tsx'
+}
 // Use the defaults from FTA
 // See: https://github.com/sgb-io/fta-website/blob/main/pages/docs/configuration.mdx
 export const defaultOptions: OptionsMap = {
-  configPath: '',
-  format: Formats.table,
+  format: Formats.json,
   json: false,
   outputLimit: 5000,
   scoreCap: 1000,
@@ -16,26 +28,9 @@ export const defaultOptions: OptionsMap = {
   extensions: ['.js', '.jsx', '.ts', '.tsx']
 }
 
-export const generateConfigOptions = (
-  options: OptionsMap
-): ConfigFileOptions => ({
-  output_limit: options.outputLimit,
-  score_cap: options.scoreCap,
-  include_comments: options.includeComments,
-  exclude_under: options.excludeUnder,
-  exclude_directories: options.excludeDirectories,
-  exclude_filenames: options.excludeFilenames,
-  extensions: options.extensions
-})
-
-export const writeConfigFile = (options: ConfigFileOptions): void => {
-  fs.writeFileSync('fta.config.json', JSON.stringify(options, null, 2))
-}
-
 export const mapActionOptions = (
   options: Partial<ActionOptions>
 ): OptionsMap => ({
-  configPath: convertOptionToString('configPath', options.configPath),
   format: convertOptionToFormat('format', options.format),
   json: convertOptionToBoolean('json', options.json),
   outputLimit: convertOptionToNumber('outputLimit', options.outputLimit),
@@ -56,7 +51,6 @@ export const mapActionOptions = (
   extensions: convertOptionToArray('extensions', options.extensions)
 })
 
-const isOptionString = (value?: string): boolean => typeof value === 'string'
 const isOptionFormat = (value?: string): boolean =>
   typeof value === 'string' && Object.values(Formats).includes(value as Formats)
 const isOptionNumber = (value?: string): boolean =>
@@ -66,17 +60,6 @@ const isOptionBoolean = (value?: string): boolean =>
 const isOptionArray = (value: string): boolean =>
   typeof value === 'string' && Array.isArray(value.split(','))
 
-const convertOptionToString = (
-  key: keyof OptionsMap,
-  value?: string
-): string => {
-  if (!value || !isOptionString(value)) {
-    convertFailLog(key, 'string', value)
-    return defaultOptions[key] as string
-  }
-  return value
-}
-
 const convertOptionToFormat = (
   key: keyof OptionsMap,
   value?: string
@@ -85,6 +68,7 @@ const convertOptionToFormat = (
     convertFailLog(key, 'format', value)
     return defaultOptions[key] as Formats
   }
+  convertSuccessLog(key, value)
   return value as Formats
 }
 
@@ -96,6 +80,7 @@ const convertOptionToArray = (
     convertFailLog(key, 'array', value)
     return defaultOptions[key] as string[]
   }
+  convertSuccessLog(key, value)
   return value.split(',')
 }
 
@@ -107,6 +92,7 @@ const convertOptionToBoolean = (
     convertFailLog(key, 'boolean', value)
     return defaultOptions[key] as boolean
   }
+  convertSuccessLog(key, value)
   return value === 'true'
 }
 
@@ -133,7 +119,7 @@ const convertFailLog = (
     )
   console.info(
     `Option: '${key}' - Using default value '${JSON.stringify(
-      defaultOptions[key]
+      defaultInput[key]
     )}'`
   )
 }
