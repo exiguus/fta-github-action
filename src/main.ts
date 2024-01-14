@@ -21,22 +21,23 @@ export async function run(): Promise<void> {
     const extensions: string = core.getInput('extensions')
 
     // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Input 'file_path' is: ${file_path}`)
-    core.debug(`Input 'config_path' is: ${config_path}`)
-    core.debug(`Input 'output_path' is: ${output_path}`)
-    // fta options
-    core.debug(`Input 'format' is: ${format}`)
-    core.debug(`Input 'json' is: ${json}`)
-    core.debug(`Input 'output_limit' is: ${output_limit}`)
-    core.debug(`Input 'score_cap' is: ${score_cap}`)
-    core.debug(`Input 'include_comments' is: ${include_comments}`)
-    core.debug(`Input 'exclude_under' is: ${exclude_under}`)
-    core.debug(`Input 'exclude_directories' is: ${exclude_directories}`)
-    core.debug(`Input 'exclude_filenames' is: ${exclude_filenames}`)
-    core.debug(`Input 'extensions' is: ${extensions}`)
-
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
+    if (process.env.ACTIONS_STEP_DEBUG === 'true') {
+      core.debug(`Input 'file_path' is: ${file_path}`)
+      core.debug(`Input 'config_path' is: ${config_path}`)
+      core.debug(`Input 'output_path' is: ${output_path}`)
+      // fta options
+      core.debug(`Input 'format' is: ${format}`)
+      core.debug(`Input 'json' is: ${json}`)
+      core.debug(`Input 'output_limit' is: ${output_limit}`)
+      core.debug(`Input 'score_cap' is: ${score_cap}`)
+      core.debug(`Input 'include_comments' is: ${include_comments}`)
+      core.debug(`Input 'exclude_under' is: ${exclude_under}`)
+      core.debug(`Input 'exclude_directories' is: ${exclude_directories}`)
+      core.debug(`Input 'exclude_filenames' is: ${exclude_filenames}`)
+      core.debug(`Input 'extensions' is: ${extensions}`)
+      // Log the current timestamp, wait, then log the new timestamp
+      core.debug(new Date().toTimeString())
+    }
     const output = await fta.run(file_path, config_path, output_path, {
       format,
       json,
@@ -48,7 +49,9 @@ export async function run(): Promise<void> {
       excludeFilenames: exclude_filenames,
       extensions
     })
-    core.debug(new Date().toTimeString())
+    if (process.env.ACTIONS_STEP_DEBUG === 'true') {
+      core.debug(new Date().toTimeString())
+    }
 
     // Set outputs for other workflow steps to use
     core.setOutput('details', output.details)

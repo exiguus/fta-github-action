@@ -22,12 +22,18 @@
     "noUnusedParameters": true,
     "strictNullChecks": true,
     "declaration": true,
-    "allowJs": true,
+    "allowJs": true
   },
   "exclude": [
     "./dist",
     "./node_modules",
     "./__tests__",
-    "./coverage"
-  ]
+    "./coverage",
+    "./.vscode",
+    "./.github",
+    "./.husky",
+    "./.jest",
+    "./commitlint.config.js"
+  ],
+  "ignore": ["./commitlint.config.js"]
 }
