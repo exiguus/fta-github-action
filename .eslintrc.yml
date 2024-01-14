@@ -1,0 +1,5 @@
+# .eslintrc.yml
+extends:
+  - ./.github/linters/.eslintrc.yml
+# rules:
+# your rules for the project root
