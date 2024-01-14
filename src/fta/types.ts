@@ -64,7 +64,7 @@ export enum Formats {
 }
 
 export type OptionsMap = {
-  format: Formats
+  format: keyof typeof Formats
   json: boolean
   outputLimit: number
   scoreCap: number

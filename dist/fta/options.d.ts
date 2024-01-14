@@ -1,4 +1,10 @@
-import { ActionInput, ActionOptions, OptionsMap } from './types';
+import { ActionInput, ActionOptions, Formats, OptionsMap } from './types';
 export declare const defaultInput: ActionInput;
 export declare const defaultOptions: OptionsMap;
 export declare const mapActionOptions: (options: Partial<ActionOptions>) => OptionsMap;
+export declare const convertOptionToFormat: (key: keyof OptionsMap, value?: string) => Formats;
+export declare const convertOptionToArray: (key: keyof OptionsMap, value?: string) => string[];
+export declare const convertOptionToBoolean: (key: keyof OptionsMap, value?: string) => boolean;
+export declare const convertOptionToNumber: (key: keyof OptionsMap, value?: string) => number;
+export declare const convertFailLog: (key: keyof OptionsMap, expect: 'boolean' | 'number' | 'array' | 'string' | 'format', value?: string) => void;
+export declare const convertSuccessLog: (key: keyof OptionsMap, value: string) => void;

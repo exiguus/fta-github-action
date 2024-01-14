@@ -24799,7 +24799,7 @@ __exportStar(__nccwpck_require__(8613), exports);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.mapActionOptions = exports.defaultOptions = exports.defaultInput = void 0;
+exports.convertSuccessLog = exports.convertFailLog = exports.convertOptionToNumber = exports.convertOptionToBoolean = exports.convertOptionToArray = exports.convertOptionToFormat = exports.mapActionOptions = exports.defaultOptions = exports.defaultInput = void 0;
 const types_1 = __nccwpck_require__(7809);
 exports.defaultInput = {
     filePath: '../src/',
@@ -24829,15 +24829,15 @@ exports.defaultOptions = {
     extensions: ['.js', '.jsx', '.ts', '.tsx']
 };
 const mapActionOptions = (options) => ({
-    format: convertOptionToFormat('format', options.format),
-    json: convertOptionToBoolean('json', options.json),
-    outputLimit: convertOptionToNumber('outputLimit', options.outputLimit),
-    scoreCap: convertOptionToNumber('scoreCap', options.scoreCap),
-    includeComments: convertOptionToBoolean('includeComments', options.includeComments),
-    excludeUnder: convertOptionToNumber('excludeUnder', options.excludeUnder),
-    excludeDirectories: convertOptionToArray('excludeDirectories', options.excludeDirectories),
-    excludeFilenames: convertOptionToArray('excludeFilenames', options.excludeFilenames),
-    extensions: convertOptionToArray('extensions', options.extensions)
+    format: (0, exports.convertOptionToFormat)('format', options.format),
+    json: (0, exports.convertOptionToBoolean)('json', options.json),
+    outputLimit: (0, exports.convertOptionToNumber)('outputLimit', options.outputLimit),
+    scoreCap: (0, exports.convertOptionToNumber)('scoreCap', options.scoreCap),
+    includeComments: (0, exports.convertOptionToBoolean)('includeComments', options.includeComments),
+    excludeUnder: (0, exports.convertOptionToNumber)('excludeUnder', options.excludeUnder),
+    excludeDirectories: (0, exports.convertOptionToArray)('excludeDirectories', options.excludeDirectories),
+    excludeFilenames: (0, exports.convertOptionToArray)('excludeFilenames', options.excludeFilenames),
+    extensions: (0, exports.convertOptionToArray)('extensions', options.extensions)
 });
 exports.mapActionOptions = mapActionOptions;
 const isOptionFormat = (value) => typeof value === 'string' && Object.values(types_1.Formats).includes(value);
@@ -24846,44 +24846,50 @@ const isOptionBoolean = (value) => typeof value === 'string' && (value === 'true
 const isOptionArray = (value) => typeof value === 'string' && Array.isArray(value.split(','));
 const convertOptionToFormat = (key, value) => {
     if (!value || !isOptionFormat(value)) {
-        convertFailLog(key, 'format', value);
+        (0, exports.convertFailLog)(key, 'format', value);
         return exports.defaultOptions[key];
     }
-    convertSuccessLog(key, value);
+    (0, exports.convertSuccessLog)(key, value);
     return value;
 };
+exports.convertOptionToFormat = convertOptionToFormat;
 const convertOptionToArray = (key, value) => {
     if (!value || !isOptionArray(value)) {
-        convertFailLog(key, 'array', value);
+        (0, exports.convertFailLog)(key, 'array', value);
         return exports.defaultOptions[key];
     }
-    convertSuccessLog(key, value);
+    (0, exports.convertSuccessLog)(key, value);
     return value.split(',');
 };
+exports.convertOptionToArray = convertOptionToArray;
 const convertOptionToBoolean = (key, value) => {
     if (!value || !isOptionBoolean(value)) {
-        convertFailLog(key, 'boolean', value);
+        (0, exports.convertFailLog)(key, 'boolean', value);
         return exports.defaultOptions[key];
     }
-    convertSuccessLog(key, value);
+    (0, exports.convertSuccessLog)(key, value);
     return value === 'true';
 };
+exports.convertOptionToBoolean = convertOptionToBoolean;
 const convertOptionToNumber = (key, value) => {
     if (!value || !isOptionNumber(value)) {
-        convertFailLog(key, 'number', value);
+        (0, exports.convertFailLog)(key, 'number', value);
         return exports.defaultOptions[key];
     }
-    convertSuccessLog(key, value);
+    (0, exports.convertSuccessLog)(key, value);
     return Number(value);
 };
+exports.convertOptionToNumber = convertOptionToNumber;
 const convertFailLog = (key, expect, value) => {
     if (value)
         console.warn(`Option: '${key}' - Expected a ${expect} but received '${value}'`);
     console.info(`Option: '${key}' - Using default value '${JSON.stringify(exports.defaultInput[key])}'`);
 };
+exports.convertFailLog = convertFailLog;
 const convertSuccessLog = (key, value) => {
     console.info(`Option: '${key}' - Using configured value '${JSON.stringify(value)}'`);
 };
+exports.convertSuccessLog = convertSuccessLog;
 
 
 /***/ }),
@@ -24964,15 +24970,34 @@ async function run(file_path, config_path, output_path, options = null) {
     let mappedOptions;
     if (config_path.length > 0) {
         // throw if config path does not exist
-        if (!fs_1.default.existsSync(path_1.default.join(__dirname, config_path)))
+        try {
+            fs_1.default.existsSync(path_1.default.join(__dirname, config_path));
+        }
+        catch (error) {
             throw new Error('Param `config_path` does not exist');
+        }
         // throw if config path is not a json file
-        if (!fs_1.default.existsSync(path_1.default.join(__dirname, config_path)))
-            throw new Error('Param `config_path` does not exist');
-        if (!fs_1.default.lstatSync(path_1.default.join(__dirname, config_path)).isFile())
-            throw new Error('Param `config_path` is not a file');
-        if (path_1.default.extname(config_path) !== '.json')
+        try {
+            path_1.default.extname(config_path) !== '.json';
+        }
+        catch (error) {
             throw new Error('Param `config_path` is not a json file');
+        }
+        // throw if config path is not a file
+        try {
+            if (path_1.default.extname(config_path) !== '.json')
+                throw new Error('Param `config_path` is not a json file');
+        }
+        catch (error) {
+            throw new Error('Param `config_path` is not a json file');
+        }
+        try {
+            if (!fs_1.default.lstatSync(path_1.default.join(__dirname, config_path)).isFile())
+                throw new Error('Param `config_path` is not a file');
+        }
+        catch (error) {
+            throw new Error('Param `config_path` is not a file');
+        }
         const config = (0, config_1.getConfig)(config_path);
         mappedOptions = (0, options_1.mapActionOptions)({
             // options have priority over config (like in the cli)

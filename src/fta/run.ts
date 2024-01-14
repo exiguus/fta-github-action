@@ -51,15 +51,30 @@ export async function run(
   let mappedOptions
   if (config_path.length > 0) {
     // throw if config path does not exist
-    if (!fs.existsSync(path.join(__dirname, config_path)))
+    try {
+      fs.existsSync(path.join(__dirname, config_path))
+    } catch (error) {
       throw new Error('Param `config_path` does not exist')
+    }
     // throw if config path is not a json file
-    if (!fs.existsSync(path.join(__dirname, config_path)))
-      throw new Error('Param `config_path` does not exist')
-    if (!fs.lstatSync(path.join(__dirname, config_path)).isFile())
-      throw new Error('Param `config_path` is not a file')
-    if (path.extname(config_path) !== '.json')
+    try {
+      path.extname(config_path) !== '.json'
+    } catch (error) {
       throw new Error('Param `config_path` is not a json file')
+    }
+    // throw if config path is not a file
+    try {
+      if (path.extname(config_path) !== '.json')
+        throw new Error('Param `config_path` is not a json file')
+    } catch (error) {
+      throw new Error('Param `config_path` is not a json file')
+    }
+    try {
+      if (!fs.lstatSync(path.join(__dirname, config_path)).isFile())
+        throw new Error('Param `config_path` is not a file')
+    } catch (error) {
+      throw new Error('Param `config_path` is not a file')
+    }
 
     const config = getConfig(config_path)
     mappedOptions = mapActionOptions({

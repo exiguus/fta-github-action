@@ -60,7 +60,7 @@ const isOptionBoolean = (value?: string): boolean =>
 const isOptionArray = (value: string): boolean =>
   typeof value === 'string' && Array.isArray(value.split(','))
 
-const convertOptionToFormat = (
+export const convertOptionToFormat = (
   key: keyof OptionsMap,
   value?: string
 ): Formats => {
@@ -72,7 +72,7 @@ const convertOptionToFormat = (
   return value as Formats
 }
 
-const convertOptionToArray = (
+export const convertOptionToArray = (
   key: keyof OptionsMap,
   value?: string
 ): string[] => {
@@ -84,7 +84,7 @@ const convertOptionToArray = (
   return value.split(',')
 }
 
-const convertOptionToBoolean = (
+export const convertOptionToBoolean = (
   key: keyof OptionsMap,
   value?: string
 ): boolean => {
@@ -96,7 +96,7 @@ const convertOptionToBoolean = (
   return value === 'true'
 }
 
-const convertOptionToNumber = (
+export const convertOptionToNumber = (
   key: keyof OptionsMap,
   value?: string
 ): number => {
@@ -108,7 +108,7 @@ const convertOptionToNumber = (
   return Number(value)
 }
 
-const convertFailLog = (
+export const convertFailLog = (
   key: keyof OptionsMap,
   expect: 'boolean' | 'number' | 'array' | 'string' | 'format',
   value?: string
@@ -124,7 +124,10 @@ const convertFailLog = (
   )
 }
 
-const convertSuccessLog = (key: keyof OptionsMap, value: string): void => {
+export const convertSuccessLog = (
+  key: keyof OptionsMap,
+  value: string
+): void => {
   console.info(
     `Option: '${key}' - Using configured value '${JSON.stringify(value)}'`
   )
