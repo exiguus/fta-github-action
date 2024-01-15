@@ -3,3 +3,4 @@ dist/
 node_modules/
 coverage/
 commitlint.config.js
+__mocks__/
