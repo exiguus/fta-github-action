@@ -35,8 +35,8 @@ node dist/index.js
 
 ### 1. Update the version
 
-It is necessary to manually update and commit the version in the package.json
-file.
+It is necessary to manually update, commit and push the version in the
+`package.json` file.
 
 ### 2. Tag and push the new release
 
