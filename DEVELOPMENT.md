@@ -36,7 +36,10 @@ node dist/index.js
 ### 1. Update the version
 
 It is necessary to manually update, commit and push the version in the
-`package.json` file.
+`package.json` file. Normally, the version should be updated according to the
+Semantic Versioning. And this happens in a pull request.
+
+Note: Only step 1 is necessary for a pull request.
 
 ### 2. Tag and push the new release
 
