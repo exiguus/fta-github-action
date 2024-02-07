@@ -79,7 +79,7 @@ jobs:
 
 ## Inputs
 
-## file_path
+### file_path
 
 Path to the project to analyze
 
@@ -87,13 +87,13 @@ Path to the project to analyze
 
 **default**: "./src/"
 
-## config_path
+### config_path
 
 Path to config file
 
 **required**: false
 
-## output_path
+### output_path
 
 Path to output file
 
@@ -101,7 +101,7 @@ Path to output file
 
 **default**: "./output.json"
 
-## format
+### format
 
 Output format (**default**: table) [**default**: table] [possible values: table,
 csv, json]
@@ -110,7 +110,7 @@ csv, json]
 
 **default**: "table"
 
-## json
+### json
 
 Output as JSON
 
@@ -118,7 +118,7 @@ Output as JSON
 
 **default**: "false"
 
-## output_limit
+### output_limit
 
 Maximum number of files to include in the table output (only applies when using
 table output) (**default**: 5000)
@@ -127,7 +127,7 @@ table output) (**default**: 5000)
 
 **default**: "5000"
 
-## score_cap
+### score_cap
 
 Maximum FTA score which will cause FTA to throw (**default**: 1000)
 
@@ -135,7 +135,7 @@ Maximum FTA score which will cause FTA to throw (**default**: 1000)
 
 **default**: "1000"
 
-## include_comments
+### include_comments
 
 Whether to include code comments when analysing (**default**: false) [possible
 values: true, false]
@@ -144,7 +144,7 @@ values: true, false]
 
 **default**: "false"
 
-## exclude_under
+### exclude_under
 
 Minimum number of lines of code for files to be included in output
 (**default**: 6)
@@ -153,7 +153,7 @@ Minimum number of lines of code for files to be included in output
 
 **default**: "6"
 
-## exclude_directories
+### exclude_directories
 
 List of directory paths separated by comma. Representing directories to exclude
 from the analysis. Files within any of these directories will be ignored. Paths
@@ -164,7 +164,7 @@ used; any supplied values are added to the exclusions list.
 
 **default**: "/dist, /bin, /build"
 
-## exclude_filenames
+### exclude_filenames
 
 List of glob patterns separated by comma. Representing filenames to exclude from
 the analysis. Files matching any of these patterns will be ignored. Globs can
@@ -176,7 +176,7 @@ inclusions.
 
 **default**: ".d.ts, .min.js, .bundle.js"
 
-## extensions
+### extensions
 
 List of file extensions separated by comma. Identify files that should be
 analyzed. JavaScript files are also accepted. The **default**s are always used;
@@ -243,3 +243,14 @@ The scripts and documentation in this project are released under the
 
 - [FTA (Fast TypeScript Analyzer)](https://ftaproject.dev/)
 - [Create a GitHub Action Using TypeScript](https://github.com/actions/typescript-action)
+
+## Contributing
+
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of
+conduct, and the process for submitting pull requests to us.
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available,
+see the
+[tags on this repository](https://github.com/exiguus/fta-github-action/tags).
