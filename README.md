@@ -1,224 +1,245 @@
-# Create a GitHub Action Using TypeScript
+# GitHub Action for FTA (Fast TypeScript Analyzer)
 
-[![GitHub Super-Linter](https://github.com/exiguus/fta-github-action//actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
-![CI](https://github.com/exiguus/fta-github-action//actions/workflows/ci.yml/badge.svg)
-[![Check dist/](https://github.com/exiguus/fta-github-action//actions/workflows/check-dist.yml/badge.svg)](https://github.com/exiguus/fta-github-action//actions/workflows/check-dist.yml)
-[![CodeQL](https://github.com/exiguus/fta-github-action//actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/exiguus/fta-github-action//actions/workflows/codeql-analysis.yml)
+[![GitHub Super-Linter](https://github.com/exiguus/fta-github-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
+![CI](https://github.com/exiguus/fta-github-action/actions/workflows/ci.yml/badge.svg)
+[![Check dist/](https://github.com/exiguus/fta-github-action//actions/workflows/check-dist.yml/badge.svg)](https://github.com/exiguus/fta-github-action/actions/workflows/check-dist.yml)
+[![CodeQL](https://github.com/exiguus/fta-github-action//actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/exiguus/fta-github-action/actions/workflows/codeql-analysis.yml)
 [![Coverage](./badges/coverage.svg)](./badges/coverage.svg)
 
-Use this template to bootstrap the creation of a TypeScript action. :rocket:
+This action runs FTA (Fast TypeScript Analyzer) on your TypeScript project. It
+provides a summary and detailed output of the analysis.
 
-This template includes compilation support, tests, a validation workflow,
-publishing, and versioning guidance.
+All FTA options are available. Supplying Options from the CLI as well as
+Configuration Options from the config file are available as inputs.
 
-If you are new, there's also a simpler introduction in the
-[Hello world JavaScript action repository](https://github.com/actions/hello-world-javascript-action).
+## Features
 
-## Create Your Own Action
+- **Score Cap**: Set a score cap to fail the action if the score is too high
+- **Artifact**: Upload the output file as an artifact
+- **Excludes**: Exclude directories and filenames from the analysis. Also it is
+  possible to exclude files with less than a certain number of lines of code
+- **Extensions**: Specify which file extensions to include in the analysis
+- **Output Format**: Specify the output format (table, csv, json).
+- **Output Limit**: Specify the maximum number of files to include in the table
+  output.
 
-To create your own action, you can use this repository as a template! Just
-follow the below instructions:
+## FTA
 
-1. Click the **Use this template** button at the top of the repository
-1. Select **Create a new repository**
-1. Select an owner and name for your new repository
-1. Click **Create repository**
-1. Clone your new repository
-
-## Initial Setup
-
-After you've cloned the repository to your local machine or codespace, you'll
-need to perform some initial setup steps before you can develop your action.
-
-> [!NOTE]
->
-> You'll need to have a reasonably modern version of
-> [Node.js](https://nodejs.org) handy (20.x or later should work!). If you are
-> using a version manager like [`nodenv`](https://github.com/nodenv/nodenv) or
-> [`nvm`](https://github.com/nvm-sh/nvm), this template has a `.node-version`
-> file at the root of the repository that will be used to automatically switch
-> to the correct version when you `cd` into the repository. Additionally, this
-> `.node-version` file is used by GitHub Actions in any `actions/setup-node`
-> actions.
-
-1. :hammer_and_wrench: Install the dependencies
-
-   ```bash
-   npm install
-   ```
-
-1. :building_construction: Package the TypeScript for distribution
-
-   ```bash
-   npm run bundle
-   ```
-
-1. :white_check_mark: Run the tests
-
-   ```bash
-   $ npm test
-
-   PASS  ./index.test.js
-     ✓ throws invalid number (3ms)
-     ✓ wait 500 ms (504ms)
-     ✓ test runs (95ms)
-
-   ...
-   ```
-
-## Update the Action Metadata
-
-The [`action.yml`](action.yml) file defines metadata about your action, such as
-input(s) and output(s). For details about this file, see
-[Metadata syntax for GitHub Actions](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions).
-
-When you copy this repository, update `action.yml` with the name, description,
-inputs, and outputs for your action.
-
-## Update the Action Code
-
-The [`src/`](./src/) directory is the heart of your action! This contains the
-source code that will be run when your action is invoked. You can replace the
-contents of this directory with your own code.
-
-There are a few things to keep in mind when writing your action code:
-
-- Most GitHub Actions toolkit and CI/CD operations are processed asynchronously.
-  In `main.ts`, you will see that the action is run in an `async` function.
-
-  ```javascript
-  import * as core from '@actions/core'
-  //...
-
-  async function run() {
-    try {
-      //...
-    } catch (error) {
-      core.setFailed(error.message)
-    }
-  }
-  ```
-
-  For more information about the GitHub Actions toolkit, see the
-  [documentation](https://github.com/actions/toolkit/blob/master/README.md).
-
-So, what are you waiting for? Go ahead and start customizing your action!
-
-1. Create a new branch
-
-   ```bash
-   git checkout -b releases/v1
-   ```
-
-1. Replace the contents of `src/` with your action code
-1. Add tests to `__tests__/` for your source code
-1. Format, test, and build the action
-
-   ```bash
-   npm run all
-   ```
-
-   > [!WARNING]
-   >
-   > This step is important! It will run [`ncc`](https://github.com/vercel/ncc)
-   > to build the final JavaScript action code with all dependencies included.
-   > If you do not run this step, your action will not work correctly when it is
-   > used in a workflow. This step also includes the `--license` option for
-   > `ncc`, which will create a license file for all of the production node
-   > modules used in your project.
-
-1. Commit your changes
-
-   ```bash
-   git add .
-   git commit -m "My first action is ready!"
-   ```
-
-1. Push them to your repository
-
-   ```bash
-   git push -u origin releases/v1
-   ```
-
-1. Create a pull request and get feedback on your action
-1. Merge the pull request into the `main` branch
-
-Your action is now published! :rocket:
-
-For information about versioning your action, see
-[Versioning](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-in the GitHub Actions toolkit.
-
-## Validate the Action
-
-You can now validate the action by referencing it in a workflow file. For
-example, [`ci.yml`](./.github/workflows/ci.yml) demonstrates how to reference an
-action in the same repository.
-
-```yaml
-steps:
-  - name: Checkout
-    id: checkout
-    uses: actions/checkout@v4
-
-  - name: Test Local Action
-    id: test-action
-    uses: ./
-    with:
-      milliseconds: 1000
-
-  - name: Print Output
-    id: output
-    run: echo "${{ steps.test-action.outputs.time }}"
-```
-
-For example workflow runs, check out the
-[Actions tab](https://github.com/exiguus/fta-github-action//actions)! :rocket:
+[FTA (Fast TypeScript Analyzer)](https://ftaproject.dev/) is a super-fast
+TypeScript static analysis tool written in Rust. It captures static information
+about TypeScript code and generates easy-to-understand analytics that tell you
+about complexity and maintainability issues that you may want to address.
 
 ## Usage
 
-After testing, you can create version tag(s) that developers can use to
-reference different stable versions of your action. For more information, see
-[Versioning](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-in the GitHub Actions toolkit.
-
-To include the action in a workflow in another repository, you can use the
-`uses` syntax with the `@` symbol to reference a specific branch, tag, or commit
-hash.
-
 ```yaml
-steps:
-  - name: Checkout
-    id: checkout
-    uses: actions/checkout@v4
+name: Continuous Integration
 
-  - name: Test Local Action
-    id: test-action
-    uses: actions/typescript-action@v1 # Commit with the `v1` tag
-    with:
-      milliseconds: 1000
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'releases/*'
 
-  - name: Print Output
-    id: output
-    run: echo "${{ steps.test-action.outputs.time }}"
+permissions:
+  contents: read
+
+jobs:
+  test-typescript:
+    name: TypeScript Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: FTA GitHub Action
+        id: fta-action
+        uses: action/fta@v1
+        with:
+          file_path: ../src/
+
+      - name: Print Output Summary
+        id: output-summary
+        run: echo -e "\nSummary:\n${{ steps.test-action.outputs.summary }}"
+
+      - name: Print Output Details
+        id: output-details
+        run: echo -e "\nDetails:\n${{ steps.test-action.outputs.details }}"
+
+      - name: Upload Output Summary
+        id: upload-output
+        uses: actions/upload-artifact@v4
+        with:
+          name: output
+          path: output.json
 ```
 
-## Publishing a new release
+## Inputs
 
-This project includes a helper script designed to streamline the process of
-tagging and pushing new releases for GitHub Actions.
+## file_path
 
-GitHub Actions allows users to select a specific version of the action to use,
-based on release tags. Our script simplifies this process by performing the
-following steps:
+Path to the project to analyze
 
-1. **Retrieving the latest release tag:** The script starts by fetching the most
-   recent release tag by looking at the local data available in your repository.
-1. **Prompting for a new release tag:** The user is then prompted to enter a new
-   release tag. To assist with this, the script displays the latest release tag
-   and provides a regular expression to validate the format of the new tag.
-1. **Tagging the new release:** Once a valid new tag is entered, the script tags
-   the new release.
-1. **Pushing the new tag to the remote:** Finally, the script pushes the new tag
-   to the remote repository. From here, you will need to create a new release in
-   GitHub and users can easily reference the new tag in their workflows.
+**required**: true
+
+**default**: "./src/"
+
+## config_path
+
+Path to config file
+
+**required**: false
+
+## output_path
+
+Path to output file
+
+**required**: false
+
+**default**: "./output.json"
+
+## format
+
+Output format (**default**: table) [**default**: table] [possible values: table,
+csv, json]
+
+**required**: false
+
+**default**: "table"
+
+## json
+
+Output as JSON
+
+**required**: false
+
+**default**: "false"
+
+## output_limit
+
+Maximum number of files to include in the table output (only applies when using
+table output) (**default**: 5000)
+
+**required**: false
+
+**default**: "5000"
+
+## score_cap
+
+Maximum FTA score which will cause FTA to throw (**default**: 1000)
+
+**required**: false
+
+**default**: "1000"
+
+## include_comments
+
+Whether to include code comments when analysing (**default**: false) [possible
+values: true, false]
+
+**required**: false
+
+**default**: "false"
+
+## exclude_under
+
+Minimum number of lines of code for files to be included in output
+(**default**: 6)
+
+**required**: false
+
+**default**: "6"
+
+## exclude_directories
+
+List of directory paths separated by comma. Representing directories to exclude
+from the analysis. Files within any of these directories will be ignored. Paths
+can be specified as relative to the project root. The **default**s are always
+used; any supplied values are added to the exclusions list.
+
+**required**: false
+
+**default**: "/dist, /bin, /build"
+
+## exclude_filenames
+
+List of glob patterns separated by comma. Representing filenames to exclude from
+the analysis. Files matching any of these patterns will be ignored. Globs can
+include wildcards and brace expansions. The **default**s are always used; any
+supplied values are added to the exclusions list. Exclusions will override
+inclusions.
+
+**required**: false
+
+**default**: ".d.ts, .min.js, .bundle.js"
+
+## extensions
+
+List of file extensions separated by comma. Identify files that should be
+analyzed. JavaScript files are also accepted. The **default**s are always used;
+any supplied values are added to the inclusions list.
+
+**required**: false
+
+**default**: ".js, .jsx, .ts, .tsx"
+
+## Outputs
+
+### summary
+
+Summary of the analysis in table format (also shown in the logs)
+
+Example:
+
+```plaintext
+Summary:
+┌─────────────────────┬────────────┬─────────────────────────────┬───────────────────┐
+│ File                ┆ Num. lines ┆ FTA Score (Lower is better) ┆ Assessment        │
+╞═════════════════════╪════════════╪═════════════════════════════╪═══════════════════╡
+│ fta/config.test.ts  ┆ 101        ┆ 61.07                       ┆ Needs improvement │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ fta/options.ts      ┆ 123        ┆ 56.59                       ┆ Could be better   │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ fta/run.ts          ┆ 80         ┆ 50.91                       ┆ Could be better   │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ main.ts             ┆ 51         ┆ 50.73                       ┆ Could be better   │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ fta/config.ts       ┆ 49         ┆ 47.49                       ┆ OK                │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ fta/run.test.ts     ┆ 106        ┆ 18.86                       ┆ OK                │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ fta/options.test.ts ┆ 74         ┆ 17.39                       ┆ OK                │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ fta/output.test.ts  ┆ 26         ┆ 14.05                       ┆ OK                │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ fta/types.ts        ┆ 64         ┆ 14.05                       ┆ OK                │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ fta/output.ts       ┆ 11         ┆ 10.81                       ┆ OK                │
+└─────────────────────┴────────────┴─────────────────────────────┴───────────────────┘
+10 files analyzed in 0.0134s.
+
+```
+
+### details
+
+Details of the analysis in the passed format (also written to the output file)
+
+Example:
+
+```plaintext
+Details:
+[{file_name:fta/config.test.ts,cyclo:3,halstead:{uniq_operators:10,uniq_operands:80,total_operators:165,total_operands:188,program_length:90,vocabulary_size:353,volume:761.7171935944062,difficulty:34.8936170212766,effort:26579.068031804814,time:1476.614890655823,bugs:0.2539057311981354},line_count:101,fta_score:61.07427570847429,assessment:Needs improvement},{file_name:fta/options.ts,cyclo:15,halstead:{uniq_operators:19,uniq_operands:72,total_operators:194,total_operands:233,program_length:91,vocabulary_size:427,volume:795.1663956254646,difficulty:29.974248927038627,effort:23834.515480893755,time:1324.139748938542,bugs:0.2650554652084882},line_count:123,fta_score:56.58699143860198,assessment:Could be better},{file_name:fta/run.ts,cyclo:16,halstead:{uniq_operators:19,uniq_operands:48,total_operators:123,total_operands:137,program_length:67,vocabulary_size:260,volume:537.4986434729065,difficulty:21.37226277372263,effort:11487.562248822409,time:638.197902712356,bugs:0.1791662144909688},line_count:80,fta_score:50.91457112647857,assessment:Could be better},{file_name:main.ts,cyclo:5,halstead:{uniq_operators:14,uniq_operands:38,total_operators:155,total_operands:142,program_length:52,vocabulary_size:297,volume:427.14459428163985,difficulty:20.6056338028169,effort:8801.585090620269,time:488.9769494789038,bugs:0.1423815314272133},line_count:51,fta_score:50.727278039537374,assessment:Could be better},{file_name:fta/config.ts,cyclo:6,halstead:{uniq_operators:18,uniq_operands:50,total_operators:70,total_operands:85,program_length:68,vocabulary_size:155,volume:494.7764595586481,difficulty:20.58823529411765,effort:10186.574167383933,time:565.9207870768852,bugs:0.16492548651954939},line_count:49,fta_score:47.488590952452135,assessment:OK},{file_name:fta/run.test.ts,cyclo:1,halstead:{uniq_operators:8,uniq_operands:71,total_operators:242,total_operands:231,program_length:79,vocabulary_size:473,volume:701.9700134938122,difficulty:37.19047619047619,effort:26106.59907326987,time:1450.3666151816594,bugs:0.2339900044979374},line_count:106,fta_score:18.86391580126201,assessment:OK},{file_name:fta/options.test.ts,cyclo:1,halstead:{uniq_operators:8,uniq_operands:58,total_operators:130,total_operands:161,program_length:66,vocabulary_size:291,volume:540.2017726319467,difficulty:23.41614906832298,effort:12649.445234921981,time:702.7469574956656,bugs:0.18006725754398223},line_count:74,fta_score:17.386714028825594,assessment:OK},{file_name:fta/output.test.ts,cyclo:1,halstead:{uniq_operators:8,uniq_operands:29,total_operators:49,total_operands:48,program_length:37,vocabulary_size:97,volume:244.19677516092372,difficulty:14.5,effort:3540.853239833394,time:196.714068879633,bugs:0.08139892505364124},line_count:26,fta_score:14.0459047299518,assessment:OK},{file_name:fta/types.ts,cyclo:1,halstead:{uniq_operators:4,uniq_operands:38,total_operators:18,total_operands:79,program_length:42,vocabulary_size:97,volume:277.1963393718594,difficulty:4.329113924050633,effort:1200.0145324705811,time:66.6674740261434,bugs:0.09239877979061979},line_count:64,fta_score:14.0459047299518,assessment:OK},{file_name:fta/output.ts,cyclo:2,halstead:{uniq_operators:9,uniq_operands:14,total_operators:14,total_operands:18,program_length:23,vocabulary_size:32,volume:115.0,difficulty:5.444444444444445,effort:626.1111111111111,time:34.78395061728395,bugs:0.03833333333333333},line_count:11,fta_score:10.80808578629157,assessment:OK}]
+```
+
+## License
+
+The scripts and documentation in this project are released under the
+[MIT License](LICENSE)
+
+## References
+
+- [FTA (Fast TypeScript Analyzer)](https://ftaproject.dev/)
+- [Create a GitHub Action Using TypeScript](https://github.com/actions/typescript-action)
