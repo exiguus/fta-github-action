@@ -52,5 +52,5 @@ It performs the following steps:
 1. Push the new tag to the remote
 
 ```bash
-node scripts/release.js
+./scripts/release.sh
 ```
