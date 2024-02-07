@@ -1,8 +1,7 @@
 {
+  "version": "0.1.0",
   "name": "typescript-action",
   "description": "GitHub Actions Fast TypeScript Analyzer (FTA) CLI",
-  "version": "0.0.0",
-  "author": "",
   "private": true,
   "homepage": "https://github.com/exiguus/fta-github-action/",
   "repository": {
@@ -43,6 +42,11 @@
     "test:output": "node dist/index.js >/dev/null && diff output.json __mocks__/output.json || exit 1",
     "all": "npm run format && npm run lint && npm run test && npm run coverage && npm run package",
     "prepare": "husky install"
+  },
+  "author": {
+    "name": "Simon Gattner",
+    "url": "https://www.gattner.name/",
+    "mastodon": "https://toot.community/@exiguus"
   },
   "license": "MIT",
   "jest": {
