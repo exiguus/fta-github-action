@@ -47,7 +47,7 @@ It performs the following steps:
 
 1. Get the latest release tag
 1. Prompt the user for a new release tag (while displaying the latest release
-   tag, and a regex to validate the new tag)
+   tag, and a regular expression to validate the new tag)
 1. Tag the new release
 1. Push the new tag to the remote
 
