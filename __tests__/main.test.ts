@@ -44,7 +44,8 @@ describe('run function', () => {
       details: 'mock details',
       summary: 'mock summary'
     }
-    jest.fn().mockResolvedValueOnce(mockRunResult)
+    // Set fta.run to return the mock run result
+    jest.spyOn(fta, 'run').mockResolvedValueOnce(mockRunResult)
 
     // Run the function
     await run()
@@ -62,9 +63,9 @@ describe('run function', () => {
       excludeFilenames: '.d.ts, .min.js, .bundle.js',
       extensions: '.js, .jsx, .ts, .tsx'
     })
-    expect(core.setFailed).toHaveBeenCalledWith(
-      `Cannot read properties of undefined (reading 'details')`
-    )
+
+    expect(core.setOutput).toHaveBeenCalledWith('details', 'mock details')
+    expect(core.setOutput).toHaveBeenCalledWith('summary', 'mock summary')
   })
 
   it('should handle errors and setFailed', async () => {
@@ -78,5 +79,39 @@ describe('run function', () => {
 
     // Expectations
     expect(core.setFailed).toHaveBeenCalledWith('Mocked error')
+  })
+
+  it('should show debug logs', async () => {
+    // Set the debug secret to true
+    process.env.ACTIONS_STEP_DEBUG = 'true'
+
+    // Set mock inputs
+    jest
+      .spyOn(core, 'getInput')
+      .mockReturnValueOnce('/path/to/file')
+      .mockReturnValueOnce('')
+      .mockReturnValueOnce('output.json')
+      .mockReturnValueOnce('table')
+      .mockReturnValueOnce('false')
+      .mockReturnValueOnce('5000')
+      .mockReturnValueOnce('1000')
+      .mockReturnValueOnce('false')
+      .mockReturnValueOnce('6')
+      .mockReturnValueOnce('/dist, /bin, /build')
+      .mockReturnValueOnce('.d.ts, .min.js, .bundle.js')
+      .mockReturnValueOnce('.js, .jsx, .ts, .tsx')
+
+    // Set mock run result
+    const mockRunResult = {
+      details: 'mock details',
+      summary: 'mock summary'
+    }
+    jest.fn().mockResolvedValueOnce(mockRunResult)
+
+    // Run the function
+    await run()
+
+    // Expectations
+    expect(core.debug).toHaveBeenCalledTimes(14) // Adjust the count based on your actual number of debug logs
   })
 })

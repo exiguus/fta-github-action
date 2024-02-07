@@ -102,9 +102,7 @@ describe('isActionOptions function', () => {
   })
 
   it('should return false for invalid ActionOptions', () => {
-    const invalidOptions = {
-      // invalid ActionOptions
-    }
+    const invalidOptions = null
 
     const result = isActionOptions(invalidOptions)
 

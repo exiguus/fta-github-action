@@ -1,8 +1,8 @@
 import fs from 'fs'
 import { execSync } from 'child_process'
 import { run } from './run'
+import * as config from './config'
 import { defaultInput } from './options'
-import { TMP_CONFIG_FILE } from './config'
 import path from 'path'
 
 jest.mock('fs')
@@ -19,6 +19,14 @@ describe('run function', () => {
   beforeEach(() => {
     // Reset mock calls before each test
     jest.clearAllMocks()
+  })
+
+  afterAll(() => {
+    // Restore original implementations after all tests are done
+    mockFsExistsSync.mockRestore()
+    mockWriteConfig.mockRestore()
+    mockWriteOutput.mockRestore()
+    mockExecSync.mockRestore()
   })
 
   it('should run successfully with default values', async () => {
@@ -39,7 +47,7 @@ describe('run function', () => {
     )
 
     expect(mockWriteConfig).toHaveBeenCalledWith(
-      expect.stringContaining(TMP_CONFIG_FILE),
+      expect.stringContaining(config.TMP_CONFIG_FILE),
       expect.any(Object)
     )
 
@@ -82,11 +90,51 @@ describe('run function', () => {
     )
   })
 
-  afterAll(() => {
-    // Restore original implementations after all tests are done
-    mockFsExistsSync.mockRestore()
-    mockWriteConfig.mockRestore()
-    mockWriteOutput.mockRestore()
-    mockExecSync.mockRestore()
+  it('should throw an error if config_path is not a json file', async () => {
+    mockFsExistsSync.mockReturnValueOnce(true)
+    mockFsExistsSync.mockReturnValueOnce(true)
+
+    await expect(run('test-file', 'nonexistent-config')).rejects.toThrow(
+      'Param `config_path` is not a json file'
+    )
+  })
+
+  it('should set format to json if json is true', async () => {
+    mockFsExistsSync.mockReturnValueOnce(true)
+    mockExecSync.mockImplementation(() => 'mocked execSync')
+
+    await run('test-file', '', '', { json: 'true' })
+
+    expect(execSync).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /npm exec --package=fta-cli -c 'fta .* --config-path .* --format json'/
+      )
+    )
+  })
+
+  it('should set format to json if json is true and format is json', async () => {
+    mockFsExistsSync.mockReturnValueOnce(true)
+    mockExecSync.mockImplementation(() => 'mocked execSync')
+
+    await run('test-file', '', '', { format: 'json', json: 'true' })
+
+    expect(execSync).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /npm exec --package=fta-cli -c 'fta .* --config-path .* --format json'/
+      )
+    )
+  })
+
+  it('should set format to table if json is false', async () => {
+    mockFsExistsSync.mockReturnValueOnce(true)
+    mockExecSync.mockImplementation(() => 'mocked execSync')
+
+    await run('test-file', '', '', { json: 'false' })
+
+    expect(execSync).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /npm exec --package=fta-cli -c 'fta .* --config-path .* --format table'/
+      )
+    )
   })
 })
