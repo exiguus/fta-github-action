@@ -27,15 +27,21 @@
     "bundle": "npm run format:write && npm run package",
     "ci-test": "jest",
     "coverage": "make-coverage-badge --output-path ./badges/coverage.svg",
+    "format": "npm run format:write",
     "format:write": "prettier --write **.ts",
     "format:check": "prettier --check **.ts",
-    "lint": "npx eslint . -c ./.github/linters/.eslintrc.yml",
+    "lint:eslint": "npx eslint . -c ./.github/linters/.eslintrc.yml",
+    "lint:markdownlint": "npx markdownlint --config ./.github/linters/.markdown-lint.yml . --ignore-path ./.markdownlintignore",
+    "lint": "npm run lint:eslint && npm run lint:markdownlint",
+    "lint:fix:eslint": "npx eslint . -c ./.github/linters/.eslintrc.yml --fix",
+    "lint:fix:markdownlint": "npx markdownlint --config ./.github/linters/.markdown-lint.yml . --fix --ignore-path ./.markdownlintignore",
+    "lint:fix": "npm run lint:fix:eslint && npm run lint:fix:markdownlint",
     "package": "ncc build src/index.ts --license licenses.txt",
     "package:watch": "npm run package -- --watch",
     "test": "npm run test:unit && npm run test:output",
     "test:unit": "jest",
     "test:output": "node dist/index.js >/dev/null && diff output.json __mocks__/output.json || exit 1",
-    "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package",
+    "all": "npm run format && npm run lint && npm run test && npm run coverage && npm run package",
     "prepare": "husky install"
   },
   "license": "MIT",
@@ -70,10 +76,11 @@
   },
   "lint-staged": {
     "*.@(ts|tsx|js|jsx|mjs|cjs)": [
-      "npm run format:write",
-      "npm run lint"
+      "npm run lint:fix:eslint",
+      "npm run format:write"
     ],
     "*.@(md|mdx|json|yml)": [
+      "npm run lint:fix:markdownlint",
       "npm run format:write"
     ]
   },
@@ -100,6 +107,7 @@
     "js-yaml": "^4.1.0",
     "lint-staged": "^15.2.0",
     "make-coverage-badge": "^1.2.0",
+    "markdownlint-cli": "^0.39.0",
     "prettier": "^3.2.4",
     "prettier-eslint": "^16.3.0",
     "ts-jest": "^29.1.2",
