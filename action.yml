@@ -1,0 +1,103 @@
+name: 'FTA Action'
+description:
+  'FTA (Fast TypeScript Analyzer) is a super-fast TypeScript static analysis
+  tool written in Rust. It captures static information about TypeScript code and
+  generates easy-to-understand analytics that tell you about complexity and
+  maintainability issues that you may want to address.'
+author: 'Simon Gattner'
+
+# Add your action's branding here. This will appear on the GitHub Marketplace
+
+# See: <https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#branding>
+
+branding:
+  icon: 'trending-up'
+  color: 'blue'
+
+# Define your inputs here
+
+inputs:
+  file_path:
+    description: 'Path to the project to analyze'
+    required: true
+    default: './src/'
+  config_path:
+    description: 'Path to config file'
+    required: false
+  output_path:
+    description: 'Path to output file'
+    required: false
+    default: './output.json'
+  format:
+    description:
+      'Output format (default: table) [default: table] [possible values: table,
+      csv, json]'
+    required: false
+    default: 'table'
+  json:
+    description: 'Output as JSON'
+    required: false
+    default: 'false'
+  output_limit:
+    description:
+      'Maximum number of files to include in the table output (only applies when
+      using table output) (default: 5000)'
+    required: false
+    default: '5000'
+  score_cap:
+    description:
+      'Maximum FTA score which will cause FTA to throw (default: 1000)'
+    required: false
+    default: '1000'
+  include_comments:
+    description:
+      'Whether to include code comments when analysing (default: false)
+      [possible values: true, false]'
+    required: false
+    default: 'false'
+  exclude_under:
+    description:
+      'Minimum number of lines of code for files to be included in output
+      (default: 6)'
+    required: false
+    default: '6'
+  exclude_directories:
+    description:
+      'List of directory paths separated by comma. Representing directories to
+      exclude from the analysis. Files within any of these directories will be
+      ignored. Paths can be specified as relative to the project root. The
+      defaults are always used; any supplied values are added to the exclusions
+      list.'
+    required: false
+    default: '/dist, /bin, /build'
+  exclude_filenames:
+    description:
+      'List of glob patterns separated by comma. Representing filenames to
+      exclude from the analysis. Files matching any of these patterns will be
+      ignored. Globs can include wildcards and brace expansions. The defaults
+      are always used; any supplied values are added to the exclusions list.
+      Exclusions will override extensions.'
+    required: false
+    default: '.d.ts, .min.js, .bundle.js'
+  extensions:
+    description:
+      'List of file extensions separated by comma. Identify files that should be
+      analyzed. JavaScript files are also accepted. The defaults are always
+      used; any supplied values are added to the inclusions list.'
+    required: false
+    default: '.js, .jsx, .ts, .tsx'
+
+# Define your outputs here
+
+outputs:
+  summary:
+    description:
+      'Summary of the analysis in table format (also shown in the logs)'
+  details:
+    description:
+      'Details of the analysis in the passed format (also written to the output
+      file)'
+
+runs:
+  using: node20
+  main: dist/index.js
