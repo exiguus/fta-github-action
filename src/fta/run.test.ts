@@ -75,10 +75,10 @@ describe('run function', () => {
     expect(result).toHaveProperty('summary')
   })
 
-  it('should throw an error if file_path does not exist', async () => {
+  it('should throw an error if project_path does not exist', async () => {
     mockFsExistsSync.mockReturnValueOnce(false)
 
-    await expect(run()).rejects.toThrow('Param `file_path` does not exist')
+    await expect(run()).rejects.toThrow('Param `project_path` does not exist')
   })
 
   it('should throw an error if config_path does not exist', async () => {

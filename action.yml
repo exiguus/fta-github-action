@@ -17,7 +17,7 @@ branding:
 # Define your inputs here
 
 inputs:
-  file_path:
+  project_path:
     description: 'Path to the project to analyze'
     required: true
     default: './src/'

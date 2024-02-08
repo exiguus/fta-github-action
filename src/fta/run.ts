@@ -14,20 +14,20 @@ import { writeOutput } from './output'
 /**
  * Run Fast TypeScript Analysis (FTA) on a file
  * @description wrap the fta-cli package to run the fta command
- * @param {string} file_path - path to the file to analyze
+ * @param {string} project_path - path to the file to analyze
  * @param {string} config_path - path to the config file
  * @param {string} output_path - path to the output file
  * @param {Partial<ActionOptions>} options - options to override the config file
  * @returns {Promise<ActionOutput>} - the output of the fta command
  **/
 export async function run(
-  file_path?: string,
+  project_path?: string,
   config_path?: string,
   output_path?: string,
   options: Partial<ActionOptions> | null = null
 ): Promise<ActionOutput> {
-  if (!file_path) {
-    file_path = defaultInput.filePath
+  if (!project_path) {
+    project_path = defaultInput.filePath
   }
   if (!config_path) {
     config_path = defaultInput.configPath
@@ -36,8 +36,8 @@ export async function run(
     output_path = defaultInput.outputPath
   }
 
-  if (!fs.existsSync(path.join(__dirname, file_path)))
-    throw new Error('Param `file_path` does not exist')
+  if (!fs.existsSync(path.join(__dirname, project_path)))
+    throw new Error('Param `project_path` does not exist')
 
   // use --format over --json shorthand fta cli cmd
   if (options?.json && options?.format !== 'json') {
@@ -147,7 +147,7 @@ export async function run(
   // details is the output of the fta command with the format option
   //  details are also saved to a file in the github action
   const configFile = path.join(__dirname, TMP_CONFIG_FILE)
-  const filePath = path.join(__dirname, file_path)
+  const filePath = path.join(__dirname, project_path)
   const details = execSync(
     `npm exec --package=fta-cli -c 'fta ${filePath} --config-path ${configFile} --format ${mappedOptions.format}'`
   ).toString()

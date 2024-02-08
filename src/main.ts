@@ -6,7 +6,7 @@ import * as fta from './fta'
  */
 export async function run(): Promise<void> {
   try {
-    const file_path: string = core.getInput('file_path')
+    const project_path: string = core.getInput('project_path')
     const config_path: string = core.getInput('config_path')
     const output_path: string = core.getInput('output_path')
     // fta options
@@ -22,7 +22,7 @@ export async function run(): Promise<void> {
 
     // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
     if (process.env.ACTIONS_STEP_DEBUG === 'true') {
-      core.debug(`Input 'file_path' is: ${file_path}`)
+      core.debug(`Input 'project_path' is: ${project_path}`)
       core.debug(`Input 'config_path' is: ${config_path}`)
       core.debug(`Input 'output_path' is: ${output_path}`)
       // fta options
@@ -38,7 +38,7 @@ export async function run(): Promise<void> {
       // Log the current timestamp, wait, then log the new timestamp
       core.debug(new Date().toTimeString())
     }
-    const output = await fta.run(file_path, config_path, output_path, {
+    const output = await fta.run(project_path, config_path, output_path, {
       format,
       json,
       outputLimit: output_limit,

@@ -24944,15 +24944,15 @@ const output_1 = __nccwpck_require__(9599);
 /**
  * Run Fast TypeScript Analysis (FTA) on a file
  * @description wrap the fta-cli package to run the fta command
- * @param {string} file_path - path to the file to analyze
+ * @param {string} project_path - path to the file to analyze
  * @param {string} config_path - path to the config file
  * @param {string} output_path - path to the output file
  * @param {Partial<ActionOptions>} options - options to override the config file
  * @returns {Promise<ActionOutput>} - the output of the fta command
  **/
-async function run(file_path, config_path, output_path, options = null) {
-    if (!file_path) {
-        file_path = options_1.defaultInput.filePath;
+async function run(project_path, config_path, output_path, options = null) {
+    if (!project_path) {
+        project_path = options_1.defaultInput.filePath;
     }
     if (!config_path) {
         config_path = options_1.defaultInput.configPath;
@@ -24960,8 +24960,8 @@ async function run(file_path, config_path, output_path, options = null) {
     if (!output_path) {
         output_path = options_1.defaultInput.outputPath;
     }
-    if (!fs_1.default.existsSync(path_1.default.join(__dirname, file_path)))
-        throw new Error('Param `file_path` does not exist');
+    if (!fs_1.default.existsSync(path_1.default.join(__dirname, project_path)))
+        throw new Error('Param `project_path` does not exist');
     // use --format over --json shorthand fta cli cmd
     if (options?.json && options?.format !== 'json') {
         options.format = 'json';
@@ -25065,7 +25065,7 @@ async function run(file_path, config_path, output_path, options = null) {
     // details is the output of the fta command with the format option
     //  details are also saved to a file in the github action
     const configFile = path_1.default.join(__dirname, config_1.TMP_CONFIG_FILE);
-    const filePath = path_1.default.join(__dirname, file_path);
+    const filePath = path_1.default.join(__dirname, project_path);
     const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${filePath} --config-path ${configFile} --format ${mappedOptions.format}'`).toString();
     // summary is the output of the fta command with the table format option
     //  to have a quick look at the results
@@ -25170,7 +25170,7 @@ const fta = __importStar(__nccwpck_require__(3607));
  */
 async function run() {
     try {
-        const file_path = core.getInput('file_path');
+        const project_path = core.getInput('project_path');
         const config_path = core.getInput('config_path');
         const output_path = core.getInput('output_path');
         // fta options
@@ -25185,7 +25185,7 @@ async function run() {
         const extensions = core.getInput('extensions');
         // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
         if (process.env.ACTIONS_STEP_DEBUG === 'true') {
-            core.debug(`Input 'file_path' is: ${file_path}`);
+            core.debug(`Input 'project_path' is: ${project_path}`);
             core.debug(`Input 'config_path' is: ${config_path}`);
             core.debug(`Input 'output_path' is: ${output_path}`);
             // fta options
@@ -25201,7 +25201,7 @@ async function run() {
             // Log the current timestamp, wait, then log the new timestamp
             core.debug(new Date().toTimeString());
         }
-        const output = await fta.run(file_path, config_path, output_path, {
+        const output = await fta.run(project_path, config_path, output_path, {
             format,
             json,
             outputLimit: output_limit,
