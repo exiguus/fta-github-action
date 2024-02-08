@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "name": "fta-github-action",
   "description": "GitHub Action Fast TypeScript Analyzer (FTA) CLI",
   "private": true,
