@@ -45,9 +45,9 @@
     "lint:fix": "npm run lint:fix:eslint && npm run lint:fix:markdownlint",
     "package": "npx ncc build src/index.ts --license licenses.txt",
     "package:watch": "npm run package -- --watch",
-    "test": "npm run test:unit && npm run test:output",
+    "test": "export GITHUB_WORKSPACE=$(pwd) && npm run test:unit && npm run test:output",
     "test:unit": "npx jest",
-    "test:output": "node dist/index.js >/dev/null && diff output.json __mocks__/output.json || exit 1",
+    "test:output": "export GITHUB_WORKSPACE=$(pwd) && node dist/index.js >/dev/null && diff output.json __mocks__/output.json || exit 1",
     "all": "npm run format && npm run lint && npm run test && npm run coverage && npm run package",
     "prepare": "husky install"
   },

@@ -37,13 +37,17 @@ describe('run function', () => {
 
     // Check if fs.existsSync and other functions were called with the expected arguments
     expect(mockFsExistsSync).toHaveBeenCalledWith(
-      expect.stringContaining(path.join(__dirname, defaultInput.filePath))
+      expect.stringContaining(
+        path.join(process.env.GITHUB_WORKSPACE || '', defaultInput.projectPath)
+      )
     )
     expect(mockFsExistsSync).toHaveBeenCalledWith(
       expect.stringContaining(defaultInput.configPath)
     )
     expect(mockFsExistsSync).toHaveBeenCalledWith(
-      expect.stringContaining(path.join(__dirname, defaultInput.filePath))
+      expect.stringContaining(
+        path.join(process.env.GITHUB_WORKSPACE || '', defaultInput.projectPath)
+      )
     )
 
     expect(mockWriteConfig).toHaveBeenCalledWith(

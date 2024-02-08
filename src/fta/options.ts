@@ -1,7 +1,7 @@
 import { ActionInput, ActionOptions, Formats, OptionsMap } from './types'
 
 export const defaultInput: ActionInput = {
-  filePath: '../src/',
+  projectPath: '/src/',
   configPath: '',
   outputPath: 'output.json',
   format: 'json',

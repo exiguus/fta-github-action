@@ -27,7 +27,7 @@ export async function run(
   options: Partial<ActionOptions> | null = null
 ): Promise<ActionOutput> {
   if (!project_path) {
-    project_path = defaultInput.filePath
+    project_path = defaultInput.projectPath
   }
   if (!config_path) {
     config_path = defaultInput.configPath
@@ -36,7 +36,9 @@ export async function run(
     output_path = defaultInput.outputPath
   }
 
-  if (!fs.existsSync(path.join(__dirname, project_path)))
+  if (
+    !fs.existsSync(path.join(process.env.GITHUB_WORKSPACE || '', project_path))
+  )
     throw new Error('Param `project_path` does not exist')
 
   // use --format over --json shorthand fta cli cmd
@@ -52,7 +54,7 @@ export async function run(
   if (config_path.length > 0) {
     // throw if config path does not exist
     try {
-      fs.existsSync(path.join(__dirname, config_path))
+      fs.existsSync(path.join(process.env.GITHUB_WORKSPACE || '', config_path))
     } catch (error) {
       throw new Error('Param `config_path` does not exist')
     }
@@ -70,7 +72,11 @@ export async function run(
       throw new Error('Param `config_path` is not a json file')
     }
     try {
-      if (!fs.lstatSync(path.join(__dirname, config_path)).isFile())
+      if (
+        !fs
+          .lstatSync(path.join(process.env.GITHUB_WORKSPACE || '', config_path))
+          .isFile()
+      )
         throw new Error('Param `config_path` is not a file')
     } catch (error) {
       throw new Error('Param `config_path` is not a file')
@@ -146,15 +152,21 @@ export async function run(
   // output
   // details is the output of the fta command with the format option
   //  details are also saved to a file in the github action
-  const configFile = path.join(__dirname, TMP_CONFIG_FILE)
-  const filePath = path.join(__dirname, project_path)
+  const configFile = path.join(
+    process.env.GITHUB_WORKSPACE || '',
+    TMP_CONFIG_FILE
+  )
+  const projectPath = path.join(
+    process.env.GITHUB_WORKSPACE || '',
+    project_path
+  )
   const details = execSync(
-    `npm exec --package=fta-cli -c 'fta ${filePath} --config-path ${configFile} --format ${mappedOptions.format}'`
+    `npm exec --package=fta-cli -c 'fta ${projectPath} --config-path ${configFile} --format ${mappedOptions.format}'`
   ).toString()
   // summary is the output of the fta command with the table format option
   //  to have a quick look at the results
   const summary = execSync(
-    `npm exec --package=fta-cli -c 'fta ${filePath} --config-path ${configFile} --format table'`
+    `npm exec --package=fta-cli -c 'fta ${projectPath} --config-path ${configFile} --format table'`
   ).toString()
 
   if (output_path) {

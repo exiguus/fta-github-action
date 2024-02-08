@@ -44,7 +44,7 @@ export type ActionOptions = Record<
 >
 
 export type ActionInput = {
-  filePath: string
+  projectPath: string
   configPath: string
   outputPath: string
 } & Record<

@@ -3,7 +3,7 @@ import path from 'path'
 import { writeOutput } from './output'
 
 describe('writeOutput function', () => {
-  const outputFilePath = '../dist/test-output.json'
+  const outputFilePath = './dist/test-output.json'
   const testData = '{"key": "value"}'
 
   it('should write data to the specified output file', () => {
@@ -14,7 +14,7 @@ describe('writeOutput function', () => {
 
     // Check if fs.writeFileSync was called with the expected arguments
     expect(spyWriteFileSync).toHaveBeenCalledWith(
-      path.join(__dirname, '..', outputFilePath),
+      path.join(process.env.GITHUB_WORKSPACE || '', outputFilePath),
       testData,
       { encoding: 'utf8' }
     )

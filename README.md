@@ -57,7 +57,9 @@ jobs:
 
       - name: FTA GitHub Action
         id: fta-action
-        uses: exiguus/fta-github-action@v0.1.0
+        uses: exiguus/fta-github-action@v0.1.1
+        with:
+          config_path: fta.config.json
 
       - name: Print Output Summary
         id: output-summary
@@ -81,9 +83,9 @@ jobs:
 
 Path to the project to analyze
 
-**required**: true
+**required**: false
 
-**default**: "./src/"
+**default**: "src/"
 
 ### config_path
 
@@ -97,7 +99,7 @@ Path to output file
 
 **required**: false
 
-**default**: "./output.json"
+**default**: "output.json"
 
 ### format
 

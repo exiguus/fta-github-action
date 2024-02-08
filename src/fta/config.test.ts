@@ -77,7 +77,7 @@ describe('writeConfig function', () => {
     writeConfig(configPath, validConfigMock)
 
     expect(fs.writeFileSync).toHaveBeenCalledWith(
-      path.join(__dirname, configPath),
+      path.join(process.env.GITHUB_WORKSPACE || '', configPath),
       JSON.stringify(validConfigMock, null, 2),
       { encoding: 'utf8' }
     )

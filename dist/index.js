@@ -24726,7 +24726,7 @@ exports.TMP_CONFIG_FILE = 'tmp-config-file.json';
  */
 const getConfig = (config_path) => {
     try {
-        const config = JSON.parse(fs_1.default.readFileSync(path_1.default.join(__dirname, config_path), 'utf8'));
+        const config = JSON.parse(fs_1.default.readFileSync(path_1.default.join(process.env.GITHUB_WORKSPACE || '', config_path), 'utf8'));
         return (0, exports.isActionOptions)(config) ? config : null;
     }
     catch (error) {
@@ -24742,7 +24742,7 @@ exports.getConfig = getConfig;
  */
 const writeConfig = (config_path, options) => {
     try {
-        fs_1.default.writeFileSync(path_1.default.join(__dirname, config_path), JSON.stringify(options, null, 2), { encoding: 'utf8' });
+        fs_1.default.writeFileSync(path_1.default.join(process.env.GITHUB_WORKSPACE || '', config_path), JSON.stringify(options, null, 2), { encoding: 'utf8' });
     }
     catch (error) {
         throw new Error('Error writing config file');
@@ -24805,7 +24805,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.convertSuccessLog = exports.convertFailLog = exports.convertOptionToNumber = exports.convertOptionToBoolean = exports.convertOptionToArray = exports.convertOptionToFormat = exports.mapActionOptions = exports.defaultOptions = exports.defaultInput = void 0;
 const types_1 = __nccwpck_require__(7809);
 exports.defaultInput = {
-    filePath: '../src/',
+    projectPath: '/src/',
     configPath: '',
     outputPath: 'output.json',
     format: 'json',
@@ -24911,8 +24911,7 @@ const fs_1 = __importDefault(__nccwpck_require__(7147));
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const writeOutput = (output_path, data) => {
     try {
-        // write output file into ../dist
-        fs_1.default.writeFileSync(path_1.default.join(__dirname, '..', output_path), data, {
+        fs_1.default.writeFileSync(path_1.default.join(process.env.GITHUB_WORKSPACE || '', output_path), data, {
             encoding: 'utf8'
         });
     }
@@ -24952,7 +24951,7 @@ const output_1 = __nccwpck_require__(9599);
  **/
 async function run(project_path, config_path, output_path, options = null) {
     if (!project_path) {
-        project_path = options_1.defaultInput.filePath;
+        project_path = options_1.defaultInput.projectPath;
     }
     if (!config_path) {
         config_path = options_1.defaultInput.configPath;
@@ -24960,7 +24959,7 @@ async function run(project_path, config_path, output_path, options = null) {
     if (!output_path) {
         output_path = options_1.defaultInput.outputPath;
     }
-    if (!fs_1.default.existsSync(path_1.default.join(__dirname, project_path)))
+    if (!fs_1.default.existsSync(path_1.default.join(process.env.GITHUB_WORKSPACE || '', project_path)))
         throw new Error('Param `project_path` does not exist');
     // use --format over --json shorthand fta cli cmd
     if (options?.json && options?.format !== 'json') {
@@ -24974,7 +24973,7 @@ async function run(project_path, config_path, output_path, options = null) {
     if (config_path.length > 0) {
         // throw if config path does not exist
         try {
-            fs_1.default.existsSync(path_1.default.join(__dirname, config_path));
+            fs_1.default.existsSync(path_1.default.join(process.env.GITHUB_WORKSPACE || '', config_path));
         }
         catch (error) {
             throw new Error('Param `config_path` does not exist');
@@ -24995,7 +24994,9 @@ async function run(project_path, config_path, output_path, options = null) {
             throw new Error('Param `config_path` is not a json file');
         }
         try {
-            if (!fs_1.default.lstatSync(path_1.default.join(__dirname, config_path)).isFile())
+            if (!fs_1.default
+                .lstatSync(path_1.default.join(process.env.GITHUB_WORKSPACE || '', config_path))
+                .isFile())
                 throw new Error('Param `config_path` is not a file');
         }
         catch (error) {
@@ -25064,12 +25065,12 @@ async function run(project_path, config_path, output_path, options = null) {
     // output
     // details is the output of the fta command with the format option
     //  details are also saved to a file in the github action
-    const configFile = path_1.default.join(__dirname, config_1.TMP_CONFIG_FILE);
-    const filePath = path_1.default.join(__dirname, project_path);
-    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${filePath} --config-path ${configFile} --format ${mappedOptions.format}'`).toString();
+    const configFile = path_1.default.join(process.env.GITHUB_WORKSPACE || '', config_1.TMP_CONFIG_FILE);
+    const projectPath = path_1.default.join(process.env.GITHUB_WORKSPACE || '', project_path);
+    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${projectPath} --config-path ${configFile} --format ${mappedOptions.format}'`).toString();
     // summary is the output of the fta command with the table format option
     //  to have a quick look at the results
-    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${filePath} --config-path ${configFile} --format table'`).toString();
+    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${projectPath} --config-path ${configFile} --format table'`).toString();
     if (output_path) {
         (0, output_1.writeOutput)(output_path, details);
     }

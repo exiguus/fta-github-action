@@ -17,15 +17,15 @@ branding:
 inputs:
   project_path:
     description: 'Path to the project to analyze'
-    required: true
-    default: './src/'
+    required: false
+    default: 'src/'
   config_path:
     description: 'Path to config file'
     required: false
   output_path:
     description: 'Path to output file'
     required: false
-    default: './output.json'
+    default: 'output.json'
   format:
     description:
       'Output format (default: table) [default: table] [possible values: table,

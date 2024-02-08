@@ -19,7 +19,10 @@ export const getConfig = (
 ): Partial<ActionOptions> | null => {
   try {
     const config = JSON.parse(
-      fs.readFileSync(path.join(__dirname, config_path), 'utf8')
+      fs.readFileSync(
+        path.join(process.env.GITHUB_WORKSPACE || '', config_path),
+        'utf8'
+      )
     )
     return isActionOptions(config) ? config : null
   } catch (error) {
@@ -39,7 +42,7 @@ export const writeConfig = (
 ): void => {
   try {
     fs.writeFileSync(
-      path.join(__dirname, config_path),
+      path.join(process.env.GITHUB_WORKSPACE || '', config_path),
       JSON.stringify(options, null, 2),
       { encoding: 'utf8' }
     )

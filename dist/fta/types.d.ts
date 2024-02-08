@@ -36,7 +36,7 @@ export declare enum FTA_ConfigFileOptions {
  **/
 export type ActionOptions = Record<keyof typeof FTA_CLIOptions | keyof typeof FTA_ConfigFileOptions, string | undefined>;
 export type ActionInput = {
-    filePath: string;
+    projectPath: string;
     configPath: string;
     outputPath: string;
 } & Record<keyof typeof FTA_CLIOptions | keyof typeof FTA_ConfigFileOptions, string>;
