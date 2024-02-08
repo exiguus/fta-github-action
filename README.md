@@ -59,15 +59,16 @@ jobs:
         id: fta-action
         uses: exiguus/fta-github-action@v0.1.1
         with:
+          project_path: src/
           config_path: fta.config.json
 
       - name: Print Output Summary
         id: output-summary
-        run: echo -e "\nSummary:\n${{ steps.test-action.outputs.summary }}"
+        run: echo -e "\nSummary:\n${{ steps.fta-action.outputs.summary }}"
 
       - name: Print Output Details
         id: output-details
-        run: echo -e "\nDetails:\n${{ steps.test-action.outputs.details }}"
+        run: echo -e "\nDetails:\n${{ steps.fta-action.outputs.details }}"
 
       - name: Upload Output Summary
         id: upload-output
