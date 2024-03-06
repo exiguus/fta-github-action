@@ -47,9 +47,9 @@
     "package:watch": "npm run package -- --watch",
     "test": "export GITHUB_WORKSPACE=$(pwd) && npm run test:unit && npm run test:output",
     "test:unit": "npx jest",
-    "test:output": "export GITHUB_WORKSPACE=$(pwd) && node dist/index.js >/dev/null && diff output.json __mocks__/output.json || exit 1",
+    "test:output": "export GITHUB_WORKSPACE=$(pwd) && node dist/index.js >/dev/null && diff output.json __mocks__/output.json || exit 1 && echo 'test failed'",
     "all": "npm run format && npm run lint && npm run test && npm run coverage && npm run package",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "author": {
     "name": "Simon Gattner",
