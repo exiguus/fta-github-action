@@ -22,7 +22,7 @@ jobs:
     name: Version Check
     runs-on: ubuntu-latest
 
-    if: ${{ github.actor != 'dependabot[bot]' }}
+    if: "startsWith(github.event.head_commit.message, 'feat')"
 
     steps:
       # The fetch-depth and fetch-tags options are required
