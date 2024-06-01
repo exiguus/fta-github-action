@@ -25144,7 +25144,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = void 0;
+exports.run = run;
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const child_process_1 = __nccwpck_require__(2081);
@@ -25287,7 +25287,6 @@ async function run(project_path, config_path, output_path, options = null) {
     }
     return { details, summary };
 }
-exports.run = run;
 
 
 /***/ }),
@@ -25373,7 +25372,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = void 0;
+exports.run = run;
 const core = __importStar(__nccwpck_require__(2186));
 const fta = __importStar(__nccwpck_require__(3607));
 /**
@@ -25437,7 +25436,6 @@ async function run() {
             core.setFailed(error.message);
     }
 }
-exports.run = run;
 
 
 /***/ }),

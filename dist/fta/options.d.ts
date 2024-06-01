@@ -6,5 +6,5 @@ export declare const convertOptionToFormat: (key: keyof OptionsMap, value?: stri
 export declare const convertOptionToArray: (key: keyof OptionsMap, value?: string) => string[];
 export declare const convertOptionToBoolean: (key: keyof OptionsMap, value?: string) => boolean;
 export declare const convertOptionToNumber: (key: keyof OptionsMap, value?: string) => number;
-export declare const convertFailLog: (key: keyof OptionsMap, expect: 'boolean' | 'number' | 'array' | 'string' | 'format', value?: string) => void;
+export declare const convertFailLog: (key: keyof OptionsMap, expect: "boolean" | "number" | "array" | "string" | "format", value?: string) => void;
 export declare const convertSuccessLog: (key: keyof OptionsMap, value: string) => void;
