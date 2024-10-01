@@ -104,8 +104,8 @@ Path to output file
 
 ### format
 
-Output format (**default**: table) [**default**: table] [possible values: table,
-csv, json]
+Output format (**default**: table) [**default**: table] [possible values:
+table, csv, json]
 
 **required**: false
 
