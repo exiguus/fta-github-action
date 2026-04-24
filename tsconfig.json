@@ -6,6 +6,8 @@
     "rootDir": "./src",
     "moduleResolution": "NodeNext",
     "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
+    "types": ["node"],
     "sourceMap": true,
     "outDir": "./dist",
     "noImplicitAny": true,
@@ -24,16 +26,19 @@
     "declaration": true,
     "allowJs": true
   },
+  "include": ["./src/**/*.ts", "./types/**/*.d.ts"],
   "exclude": [
     "./dist",
     "./node_modules",
+    "./__mocks__",
     "./__tests__",
     "./coverage",
     "./.vscode",
     "./.github",
     "./.husky",
     "./.jest",
-    "./commitlint.config.js"
+    "./commitlint.config.js",
+    "./src/**/*.test.ts"
   ],
   "ignore": ["./commitlint.config.js"]
 }

@@ -13,7 +13,7 @@
  * | `exclude_filenames`   | N/A                     |
  * | `exclude_directories` | N/A                     |
  **/
-declare enum FTA_CLIOptions {
+declare enum _FTA_CLIOptions {
     configPath = "config-path",
     format = "format",
     json = "json",
@@ -34,12 +34,12 @@ export declare enum FTA_ConfigFileOptions {
 /**
  * Action
  **/
-export type ActionOptions = Record<keyof typeof FTA_CLIOptions | keyof typeof FTA_ConfigFileOptions, string | undefined>;
+export type ActionOptions = Record<keyof typeof _FTA_CLIOptions | keyof typeof FTA_ConfigFileOptions, string | undefined>;
 export type ActionInput = {
     projectPath: string;
     configPath: string;
     outputPath: string;
-} & Record<keyof typeof FTA_CLIOptions | keyof typeof FTA_ConfigFileOptions, string>;
+} & Record<keyof typeof _FTA_CLIOptions | keyof typeof FTA_ConfigFileOptions, string>;
 export type ActionOutput = {
     details: string;
     summary: string;

@@ -55,10 +55,8 @@ describe('getConfig function', () => {
       const result = getConfig(invalidConfigMockPath)
       expect(result).toBeNull()
     } catch (error) {
-      // eslint-disable-next-line jest/no-conditional-expect
       expect(error).toBeInstanceOf(Error)
       if (error instanceof Error)
-        // eslint-disable-next-line jest/no-conditional-expect
         expect(error?.message).toEqual(
           'Param `config_path` is not a valid json file'
         )

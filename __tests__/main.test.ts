@@ -114,4 +114,14 @@ describe('run function', () => {
     // Expectations
     expect(core.debug).toHaveBeenCalledTimes(14) // Adjust the count based on your actual number of debug logs
   })
+
+  it('should not call setFailed for non-Error throws', async () => {
+    jest.spyOn(core, 'getInput').mockImplementationOnce(() => {
+      throw 'non-error throw'
+    })
+
+    await run()
+
+    expect(core.setFailed).not.toHaveBeenCalled()
+  })
 })
