@@ -1,0 +1,5 @@
+[allowlist]
+  description = "Allowlisted paths"
+  paths = [
+    '''dist/'''
+  ]
