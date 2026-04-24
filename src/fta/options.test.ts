@@ -43,7 +43,7 @@ describe('convertOptionToFormat function', () => {
     const defaultResult = convertOptionToFormat('format', invalidFormat)
 
     expect(spyConsoleInfo).not.toHaveBeenCalledWith(
-      `"Option: 'format' - Using configured value '\"csv\"'" "Option: 'format' - Using configured value '\"json\"'"`
+      `"Option: 'format' - Using configured value '"csv"'" "Option: 'format' - Using configured value '"json"'"`
     )
 
     expect(result).toEqual(Formats.csv)
