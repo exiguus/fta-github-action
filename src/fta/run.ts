@@ -58,12 +58,6 @@ export async function run(
     } catch (error) {
       throw new Error('Param `config_path` does not exist')
     }
-    // throw if config path is not a json file
-    try {
-      path.extname(config_path) !== '.json'
-    } catch (error) {
-      throw new Error('Param `config_path` is not a json file')
-    }
     // throw if config path is not a file
     try {
       if (path.extname(config_path) !== '.json')

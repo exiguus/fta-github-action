@@ -43,7 +43,6 @@ describe('convertOptionToFormat function', () => {
     const defaultResult = convertOptionToFormat('format', invalidFormat)
 
     expect(spyConsoleInfo).not.toHaveBeenCalledWith(
-      // eslint-disable-next-line no-useless-escape
       `"Option: 'format' - Using configured value '\"csv\"'" "Option: 'format' - Using configured value '\"json\"'"`
     )
 
