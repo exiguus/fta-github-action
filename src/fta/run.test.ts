@@ -141,4 +141,58 @@ describe('run function', () => {
       )
     )
   })
+
+  it('should throw an error if checking config path existence throws', async () => {
+    mockFsExistsSync.mockReturnValueOnce(true)
+    mockFsExistsSync.mockImplementationOnce(() => {
+      throw new Error('fs error')
+    })
+
+    await expect(run('test-file', 'test-config.json')).rejects.toThrow(
+      'Param `config_path` does not exist'
+    )
+  })
+
+  it('should throw an error when config path exists but is not a file', async () => {
+    mockFsExistsSync.mockReturnValueOnce(true)
+    mockFsExistsSync.mockReturnValueOnce(true)
+    jest.spyOn(fs, 'lstatSync').mockReturnValueOnce({
+      isFile: () => false
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+
+    await expect(run('test-file', 'test-config.json')).rejects.toThrow(
+      'Param `config_path` is not a file'
+    )
+  })
+
+  it('should use config file values and override with explicit options', async () => {
+    mockFsExistsSync.mockReturnValueOnce(true)
+    mockFsExistsSync.mockReturnValueOnce(true)
+    jest.spyOn(fs, 'lstatSync').mockReturnValueOnce({
+      isFile: () => true
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+    jest.spyOn(config, 'getConfig').mockReturnValueOnce({
+      format: 'table',
+      json: 'false',
+      output_limit: '1234',
+      score_cap: '1000',
+      include_comments: 'false',
+      exclude_under: '6',
+      exclude_directories: '/dist,/bin',
+      exclude_filenames: '.d.ts,.min.js',
+      extensions: '.ts,.js'
+    })
+    mockExecSync.mockImplementation(() => 'mocked execSync')
+
+    await run('test-file', 'test-config.json', 'out.json', { format: 'csv' })
+
+    expect(config.getConfig).toHaveBeenCalledWith('test-config.json')
+    expect(execSync).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /npm exec --package=fta-cli -c 'fta .* --config-path .* --format csv'/
+      )
+    )
+  })
 })

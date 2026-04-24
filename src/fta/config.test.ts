@@ -62,6 +62,24 @@ describe('getConfig function', () => {
         )
     }
   })
+
+  it('should read config relative to GITHUB_WORKSPACE when set', () => {
+    const prevWorkspace = process.env.GITHUB_WORKSPACE
+    process.env.GITHUB_WORKSPACE = '/tmp/workspace'
+
+    jest
+      .spyOn(fs, 'readFileSync')
+      .mockReturnValueOnce(JSON.stringify(validConfigMock))
+
+    getConfig(validConfigMockPath)
+
+    expect(fs.readFileSync).toHaveBeenCalledWith(
+      path.join('/tmp/workspace', validConfigMockPath),
+      'utf8'
+    )
+
+    process.env.GITHUB_WORKSPACE = prevWorkspace
+  })
 })
 
 describe('writeConfig function', () => {
@@ -89,6 +107,25 @@ describe('writeConfig function', () => {
     expect(() => writeConfig(configPath, validConfigMock)).toThrow(
       'Error writing config file'
     )
+  })
+
+  it('should write config relative to GITHUB_WORKSPACE when set', () => {
+    const prevWorkspace = process.env.GITHUB_WORKSPACE
+    process.env.GITHUB_WORKSPACE = '/tmp/workspace'
+
+    jest.spyOn(fs, 'writeFileSync').mockImplementationOnce(() => {
+      // do nothing
+    })
+
+    writeConfig(configPath, validConfigMock)
+
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      path.join('/tmp/workspace', configPath),
+      JSON.stringify(validConfigMock, null, 2),
+      { encoding: 'utf8' }
+    )
+
+    process.env.GITHUB_WORKSPACE = prevWorkspace
   })
 })
 

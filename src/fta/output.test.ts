@@ -37,4 +37,26 @@ describe('writeOutput function', () => {
     // Clean up the mock
     jest.restoreAllMocks()
   })
+
+  it('should write output relative to GITHUB_WORKSPACE when set', () => {
+    const prevWorkspace = process.env.GITHUB_WORKSPACE
+    process.env.GITHUB_WORKSPACE = '/tmp/workspace'
+
+    const spyWriteFileSync = jest
+      .spyOn(fs, 'writeFileSync')
+      .mockImplementationOnce(() => {
+        // do nothing
+      })
+
+    writeOutput(outputFilePath, testData)
+
+    expect(spyWriteFileSync).toHaveBeenCalledWith(
+      path.join('/tmp/workspace', outputFilePath),
+      testData,
+      { encoding: 'utf8' }
+    )
+
+    process.env.GITHUB_WORKSPACE = prevWorkspace
+    spyWriteFileSync.mockRestore()
+  })
 })
