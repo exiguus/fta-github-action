@@ -155,12 +155,12 @@ export async function run(
     project_path
   )
   const details = execSync(
-    `npm exec --package=fta-cli -c 'fta ${projectPath} --config-path ${configFile} --format ${mappedOptions.format}'`
+    `npm exec --package=fta-cli -c 'node "$(command -v fta)" "${projectPath}" --config-path "${configFile}" --format ${mappedOptions.format}'`
   ).toString()
   // summary is the output of the fta command with the table format option
   //  to have a quick look at the results
   const summary = execSync(
-    `npm exec --package=fta-cli -c 'fta ${projectPath} --config-path ${configFile} --format table'`
+    `npm exec --package=fta-cli -c 'node "$(command -v fta)" "${projectPath}" --config-path "${configFile}" --format table'`
   ).toString()
 
   if (output_path) {
