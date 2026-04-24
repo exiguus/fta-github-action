@@ -48,6 +48,7 @@
     "test": "export GITHUB_WORKSPACE=$(pwd) && npm run test:unit && npm run test:output",
     "test:unit": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "test:output": "export GITHUB_WORKSPACE=$(pwd) && node dist/index.js >/dev/null && diff output.json __mocks__/output.json >/dev/null",
+    "test:output:update": "export GITHUB_WORKSPACE=$(pwd) && node dist/index.js >/dev/null && cp output.json __mocks__/output.json",
     "all": "npm run format && npm run lint && npm run test && npm run coverage && npm run package",
     "prepare": "husky"
   },
