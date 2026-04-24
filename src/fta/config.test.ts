@@ -51,16 +51,9 @@ describe('getConfig function', () => {
       throw new Error()
     })
 
-    try {
-      const result = getConfig(invalidConfigMockPath)
-      expect(result).toBeNull()
-    } catch (error) {
-      expect(error).toBeInstanceOf(Error)
-      if (error instanceof Error)
-        expect(error?.message).toEqual(
-          'Param `config_path` is not a valid json file'
-        )
-    }
+    expect(() => getConfig(invalidConfigMockPath)).toThrow(
+      'Param `config_path` is not a valid json file'
+    )
   })
 
   it('should read config relative to GITHUB_WORKSPACE when set', () => {
