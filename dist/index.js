@@ -352,10 +352,10 @@ async function run(project_path, config_path, output_path, options = null) {
     //  details are also saved to a file in the github action
     const configFile = path_1.default.join(process.env.GITHUB_WORKSPACE || '', config_1.TMP_CONFIG_FILE);
     const projectPath = path_1.default.join(process.env.GITHUB_WORKSPACE || '', project_path);
-    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${projectPath} --config-path ${configFile} --format ${mappedOptions.format}'`).toString();
+    const details = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'node "$(command -v fta)" "${projectPath}" --config-path "${configFile}" --format ${mappedOptions.format}'`).toString();
     // summary is the output of the fta command with the table format option
     //  to have a quick look at the results
-    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'fta ${projectPath} --config-path ${configFile} --format table'`).toString();
+    const summary = (0, child_process_1.execSync)(`npm exec --package=fta-cli -c 'node "$(command -v fta)" "${projectPath}" --config-path "${configFile}" --format table'`).toString();
     if (output_path) {
         (0, output_1.writeOutput)(output_path, details);
     }

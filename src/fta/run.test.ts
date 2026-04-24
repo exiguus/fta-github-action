@@ -59,13 +59,13 @@ describe('run function', () => {
 
     expect(mockExecSync).toHaveBeenCalledWith(
       expect.stringMatching(
-        /npm exec --package=fta-cli -c 'fta .* --config-path .* --format table'/
+        /npm exec --package=fta-cli -c 'node "\$\(command -v fta\)" ".*" --config-path ".*" --format table'/
       )
     )
 
     expect(mockExecSync).toHaveBeenCalledWith(
       expect.stringMatching(
-        /npm exec --package=fta-cli -c 'fta .* --config-path .* --format json'/
+        /npm exec --package=fta-cli -c 'node "\$\(command -v fta\)" ".*" --config-path ".*" --format json'/
       )
     )
 
@@ -111,7 +111,7 @@ describe('run function', () => {
 
     expect(execSync).toHaveBeenCalledWith(
       expect.stringMatching(
-        /npm exec --package=fta-cli -c 'fta .* --config-path .* --format json'/
+        /npm exec --package=fta-cli -c 'node "\$\(command -v fta\)" ".*" --config-path ".*" --format json'/
       )
     )
   })
@@ -124,7 +124,7 @@ describe('run function', () => {
 
     expect(execSync).toHaveBeenCalledWith(
       expect.stringMatching(
-        /npm exec --package=fta-cli -c 'fta .* --config-path .* --format json'/
+        /npm exec --package=fta-cli -c 'node "\$\(command -v fta\)" ".*" --config-path ".*" --format json'/
       )
     )
   })
@@ -137,7 +137,7 @@ describe('run function', () => {
 
     expect(execSync).toHaveBeenCalledWith(
       expect.stringMatching(
-        /npm exec --package=fta-cli -c 'fta .* --config-path .* --format table'/
+        /npm exec --package=fta-cli -c 'node "\$\(command -v fta\)" ".*" --config-path ".*" --format table'/
       )
     )
   })
@@ -191,7 +191,7 @@ describe('run function', () => {
     expect(config.getConfig).toHaveBeenCalledWith('test-config.json')
     expect(execSync).toHaveBeenCalledWith(
       expect.stringMatching(
-        /npm exec --package=fta-cli -c 'fta .* --config-path .* --format csv'/
+        /npm exec --package=fta-cli -c 'node "\$\(command -v fta\)" ".*" --config-path ".*" --format csv'/
       )
     )
   })
