@@ -116,7 +116,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
-    "@commitlint/config-conventional": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.3",
     "@commitlint/prompt-cli": "^20.5.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.6.0",
