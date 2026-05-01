@@ -115,7 +115,7 @@
     "fta-cli": "^3.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.5.0",
+    "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.0",
     "@commitlint/prompt-cli": "^20.5.0",
     "@types/jest": "^30.0.0",
