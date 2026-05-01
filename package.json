@@ -120,7 +120,7 @@
     "@commitlint/prompt-cli": "^20.5.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.6.0",
-    "@typescript-eslint/eslint-plugin": "^8.59.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.1",
     "@typescript-eslint/parser": "^8.59.0",
     "@vercel/ncc": "^0.38.4",
     "eslint": "^10.2.1",
